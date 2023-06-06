@@ -1,5 +1,6 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "Detector.hpp"
 
 using namespace cv;
 using namespace std;
@@ -10,9 +11,10 @@ using namespace std;
 
 int main(int argc, char** argv) {
     
-    namedWindow("Output");    
     Mat image = imread("../Food_leftover_dataset/tray1/food_image.jpg");
-    imshow("Output", image);
-    waitKey(0);
+    
+    vector<KeyPoint> keypoints;
+    Mat descriptors;
+    featureDetector(image, keypoints, descriptors);
 
 }
