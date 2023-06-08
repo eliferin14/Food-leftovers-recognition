@@ -10,8 +10,8 @@ void featureDetector(Mat& src, vector<KeyPoint>& keypoints, Mat& descriptors) {
     // https://docs.opencv.org/3.4/d7/d60/classcv_1_1SIFT.html#ad337517bfdc068ae0ba0924ff1661131
     int nFeatures = 0;                  // 0
     int nOctaveLayers = 3;              // 3
-    double contrastThreshold = 0.05;    // 0.04
-    double edgeThreshold = 5;          // 10
+    double contrastThreshold = 0.04;    // 0.04
+    double edgeThreshold = 10;          // 10
     double sigma = 1.6;                 // 1.6
 
     // Feature detector implementation, can be SIFT, SURF, ORB...
@@ -143,10 +143,21 @@ void meanShift_onePoint(vector<KeyPoint>& keypoints, Point2f startingPoint, doub
     }
 }
 
-void drawPath(Mat& img, vector<Point2f>& points) {
-    for (int i=0; i<points.size()-1; i++) {
-        arrowedLine(img, points[i], points[i+1], Scalar(255,0,0), 2, 8, 0, 0.1);
+void drawPath(Mat& img, vector<Point2f>& points, Scalar color) {
+    if ( pointsDistance(points[0],points[1]) == 0) {
+        return;
     }
+
+    // Draw the starting point in green
+    circle(img, points.front(), 3, Scalar(0,255,0), 3, 8, 0);
+
+    // Blue arrows between iterations
+    for (int i=0; i<points.size()-1; i++) {
+        arrowedLine(img, points[i], points[i+1], color, 2, 8, 0, 0.1);
+    }
+
+    // Draw the end point in red
+    circle(img, points.back(), 3, Scalar(0,0,255), 3, 8, 0);
 }
 
 void meanShift_grid(Mat& src, vector<KeyPoint>& keypoints, double radius, double threshold, vector<vector<Point2f>>& paths, int gridRows, int gridCols) {

@@ -71,12 +71,12 @@ void test_meanShift_onePoint() {
     cout << iter << endl;
 
     Mat path = image.clone();
-    drawPath(path, iter);
+    drawPath(path, iter, Scalar(255,0,0));
     showImage("Path", path);
 }
 
 void test_meanShift_grid() {
-    Mat image = imread("../Food_leftover_dataset/tray4/food_image.jpg");
+    Mat image = imread("../Food_leftover_dataset/tray8/food_image.jpg");
 
     vector<KeyPoint> keypoints;
     Mat descriptors;
@@ -91,7 +91,7 @@ void test_meanShift_grid() {
     meanShift_grid(image, keypoints, radius, threshold, paths, gridCols, gridRows);
 
     for (int i=0; i<paths.size(); i++) {
-        drawPath(image, paths[i]);
+        drawPath(image, paths[i], Scalar(255,0,0));
     }
     showImage("Mean shift grid", image);
 }

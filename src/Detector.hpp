@@ -10,7 +10,7 @@ void clusterKeyPoints(Mat& src);
 Mat Postprocess(Mat input_image);
 void ignoreIsolatedKeypoints(Mat& src, vector<KeyPoint>& keypoints, vector<KeyPoint>& filteredKeyPoints);
 
-void drawPath(Mat& img, vector<Point2f>& points);
+void drawPath(Mat& img, vector<Point2f>& points, Scalar color);
 
 // Mean Shift for keypoints
 double pointsDistance(Point p1, Point p2);
