@@ -24,3 +24,32 @@ float distance(Point2f a, Point2f b) {
 	dist = pow(dist,0.5);
 	return dist;
 }
+
+void kMeans(vector<Point2f> centers, vector<Point2f>points, vector<int> &labels, int nCluster) {
+	float temp_dist = 1000;
+	float temp = 0;
+	for (int i = 0; i < points.size(); i++) {
+		for (int j = 0; j < centers.size(); j++) {
+			temp = distance(centers[j], points[i]);
+			if (temp < temp_dist) {
+				labels[i] = j;
+				temp_dist = temp;
+			}
+		}
+		temp_dist = 1000;
+	}
+}
+
+void clusterPruning(vector<Point2f>& centers, vector<int> labels,int threshold) {
+	vector<int> counter(centers.size());
+	for (int i = 0; i < labels.size(); i++) {
+		counter[labels[i]]++;
+	}
+	vector<Point2f> newCenters;
+	for (int i = 0; i < counter.size(); i++) {
+		if (counter[i] >= threshold) {
+			newCenters.push_back(centers[i]);
+		}
+	}
+	centers = newCenters;
+}
