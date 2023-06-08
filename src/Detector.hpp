@@ -18,3 +18,5 @@ void getNeighbourhood(vector<KeyPoint>& keypoints, Point center, double radius, 
 Point2f getBaricenter(vector<KeyPoint>& neighbourhood);
 void meanShift_onePoint(vector<KeyPoint>& keypoints, Point2f startingPoint, double radius, double threshold, vector<Point2f>& baricenterIterations);
 void meanShift_grid(Mat& src, vector<KeyPoint>& keypoints, double radius, double threshold, vector<vector<Point2f>>& paths, int gridRows, int gridCols);
+void meanShift_keypoints(Mat& src, vector<KeyPoint>& keypoints, double radius, double threshold, vector<vector<Point2f>>& paths);
+void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f>& centroids);

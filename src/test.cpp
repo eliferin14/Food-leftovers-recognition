@@ -82,13 +82,17 @@ void test_meanShift_grid() {
     Mat descriptors;
     featureDetector(image, keypoints, descriptors);
 
-    double radius = 150;
+    double radius = 200;
     double threshold = 0.5;
-    int gridRows = 10;
-    int gridCols = 10;
+    int gridRows = 15;
+    int gridCols = 15;
     vector<vector<Point2f>> paths;
 
     meanShift_grid(image, keypoints, radius, threshold, paths, gridCols, gridRows);
+
+    for (int i=0; i<paths.size(); i++) {
+        cout << paths[i].size() << endl;
+    }
 
     for (int i=0; i<paths.size(); i++) {
         drawPath(image, paths[i], Scalar(255,0,0));
@@ -96,8 +100,58 @@ void test_meanShift_grid() {
     showImage("Mean shift grid", image);
 }
 
+void test_meanShift_keypoints() {
+    Mat image = imread("../Food_leftover_dataset/tray2/food_image.jpg");
+
+    vector<KeyPoint> keypoints;
+    Mat descriptors;
+    featureDetector(image, keypoints, descriptors);
+
+    double radius = 200;
+    double threshold = 0.5;
+    vector<vector<Point2f>> paths;
+
+    meanShift_keypoints(image, keypoints, radius, threshold, paths);
+
+    for (int i=0; i<paths.size(); i++) {
+        cout << paths[i].size() << endl;
+    }
+
+    for (int i=0; i<paths.size(); i++) {
+        drawPath(image, paths[i], Scalar(255,0,0));
+    }
+    showImage("Mean shift grid", image);
+}
+
+void test_findCentroids() {
+    Mat image = imread("../Food_leftover_dataset/tray1/food_image.jpg");
+
+    vector<KeyPoint> keypoints;
+    Mat descriptors;
+    featureDetector(image, keypoints, descriptors);
+
+    double radius = 200;
+    double threshold = 0.5;
+    vector<vector<Point2f>> paths;
+
+    meanShift_keypoints(image, keypoints, radius, threshold, paths);
+
+    double centroidRadius = 300;
+    vector<Point2f> centroids;
+    findCentroids(paths, centroidRadius, centroids);
+    cout << centroids.size() << endl;
+
+    for (int i=0; i<paths.size(); i++) {
+        drawPath(image, paths[i], Scalar(255,0,0));
+    }
+    for (int i=0; i<centroids.size(); i++) {
+        circle(image, centroids[i], 50, Scalar(255,0,255), 3, 8, 0);
+    }
+    showImage("Centroids", image);
+}
+
 int main(int argc, char** argv) {
     
-    test_meanShift_grid();
+    test_findCentroids();
 
 }

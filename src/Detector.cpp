@@ -10,8 +10,8 @@ void featureDetector(Mat& src, vector<KeyPoint>& keypoints, Mat& descriptors) {
     // https://docs.opencv.org/3.4/d7/d60/classcv_1_1SIFT.html#ad337517bfdc068ae0ba0924ff1661131
     int nFeatures = 0;                  // 0
     int nOctaveLayers = 3;              // 3
-    double contrastThreshold = 0.04;    // 0.04
-    double edgeThreshold = 10;          // 10
+    double contrastThreshold = 0.05;    // 0.04
+    double edgeThreshold = 5;          // 10
     double sigma = 1.6;                 // 1.6
 
     // Feature detector implementation, can be SIFT, SURF, ORB...
@@ -107,6 +107,11 @@ void getNeighbourhood(vector<KeyPoint>& keypoints, Point center, double radius, 
 }
 
 Point2f getBaricenter(vector<KeyPoint>& neighbourhood) {
+    // If there are no neighbours, return (-1,-1);
+    if (neighbourhood.size()==0) {
+        return Point2f(-1,-1);
+    }
+
     // Compute the mean x and y of all the points
     float sumX=0, sumY=0;
     for (int i=0; i<neighbourhood.size(); i++) {
@@ -136,6 +141,12 @@ void meanShift_onePoint(vector<KeyPoint>& keypoints, Point2f startingPoint, doub
         // Update the baricenter
         Point2f oldCenter = center;
         center = getBaricenter(neighbours);
+
+        // If there are no neighbours (baricenter is (-1,-1)), end the cycle
+        if (center.x == -1 && center.y == -1) {
+            return;
+        }
+
         baricenterIterations.push_back(center);
 
         // Compute the displacement
@@ -144,7 +155,7 @@ void meanShift_onePoint(vector<KeyPoint>& keypoints, Point2f startingPoint, doub
 }
 
 void drawPath(Mat& img, vector<Point2f>& points, Scalar color) {
-    if ( pointsDistance(points[0],points[1]) == 0) {
+    if ( points.size() == 1 ) {
         return;
     }
 
@@ -180,5 +191,37 @@ void meanShift_grid(Mat& src, vector<KeyPoint>& keypoints, double radius, double
         vector<Point2f> path;
         meanShift_onePoint(keypoints, grid[i], radius, threshold, path);
         paths.push_back(path);
+    }
+}
+
+void meanShift_keypoints(Mat& src, vector<KeyPoint>& keypoints, double radius, double threshold, vector<vector<Point2f>>& paths) {
+    for (int i=0; i<keypoints.size(); i++) {
+        vector<Point2f> path;
+        meanShift_onePoint(keypoints, keypoints[i].pt, radius, threshold, path);
+        paths.push_back(path);
+    }
+}
+
+void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f>& centroids) {
+    // Scan all the paths
+    for (int i=0; i<paths.size(); i++) {
+        vector<Point2f> path = paths[i];
+
+        // If the path has only 1 point, ignore it
+        if (path.size()==1) continue;
+
+        // Otherwise we select the final point
+        Point2f finalPoint = path.back();
+
+        // We check if the final point is close to a point that is already a centroid
+        // If there are no close centroids, we include it in the vector. Otherwise we ignore it
+        bool isClose = false;
+        for (int j=0; j<centroids.size(); j++) {
+            if (pointsDistance(centroids[j], finalPoint) < radius) {
+                isClose = true;
+                break;
+            }
+        }
+        if ( !isClose ) centroids.push_back(finalPoint);
     }
 }
