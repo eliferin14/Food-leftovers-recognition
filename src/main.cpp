@@ -11,10 +11,14 @@ using namespace std;
 
 int main(int argc, char** argv) {
     
-    Mat image = imread("../Food_leftover_dataset/tray1/food_image.jpg");
+    Mat image = imread("../Food_leftover_dataset/tray4/food_image.jpg");
     
     vector<KeyPoint> keypoints;
     Mat descriptors;
     featureDetector(image, keypoints, descriptors);
+
+    clusterKeyPoints(image);
+
+    //cout << keypoints[0].pt << endl;
 
 }

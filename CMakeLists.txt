@@ -11,7 +11,9 @@ include_directories(include ${OpenCV_INCLUDE_DIRS})
 # Create executables
 # Multiple executables can be defined, one for each task
 add_executable(detector src/main.cpp src/Detector.cpp)
+add_executable(test src/test.cpp src/Detector.cpp)
 
 # Link against OpenCV library
 # Each executable should have its own link 
 target_link_libraries(detector ${OpenCV_LIBS})
+target_link_libraries(test ${OpenCV_LIBS})
