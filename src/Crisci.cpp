@@ -1,5 +1,6 @@
 #include "Crisci.h"
 #include<cmath>
+#include <opencv2/core/types.hpp>
 using namespace std;
 using namespace cv;
 
@@ -52,4 +53,17 @@ void clusterPruning(vector<Point2f>& centers, vector<int> labels,int threshold) 
 		}
 	}
 	centers = newCenters;
+}
+
+void imageSlicer(vector<vector<Point2f>> coordinatePoints,Mat originalImage,vector<Mat>& slicedImages) {
+	//We get the coordinatesof the bounding box so that we can slice the image for each bounding box.
+	int temp_x1, temp_x2, temp_y1, temp_y2;
+	for (int i = 0; i < coordinatePoints.size(); i++) {
+		temp_x1 = coordinatePoints[i][0].x;
+		temp_y1 = coordinatePoints[i][0].y;
+		temp_x2 = coordinatePoints[i][1].x - temp_x1;
+		temp_y2 = coordinatePoints[i][1].y - temp_y1;
+		slicedImages.push_back(originalImage(Rect(temp_x1,temp_y1,temp_x2,temp_y2)));
+	}
+
 }

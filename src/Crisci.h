@@ -7,3 +7,4 @@ void featurePruning(vector<Point2f>centers, vector<Point2f>points,vector<int>lab
 float distance(Point2f a, Point2f b);
 void kMeans(vector<Point2f> centers,vector<Point2f>points,vector<int>& labels,int nCluster);
 void clusterPruning(vector<Point2f>& centers, vector<int> labels,int threshold); //We might need the & next to labels due to best practice
+void imageSlicer(vector<vector<Point2f>> coordinatePoints,Mat originalImage ,vector<Mat>& slicedImages);
