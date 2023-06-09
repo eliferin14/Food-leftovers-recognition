@@ -3,7 +3,7 @@
 using namespace std;
 using namespace cv;
 
-void BoundingBoxID(Mat& src, std::vector<Point2f> points, std::vector<Point2f> centers, vector<int> bestLabels){
+void BoundingBoxID(Mat& src, std::vector<Point2f> points, std::vector<Point2f> centers, vector<int> bestLabels, vector<vector<Point2f>>& extremes){
 
     Mat img=src.clone();
 
@@ -49,12 +49,12 @@ void BoundingBoxID(Mat& src, std::vector<Point2f> points, std::vector<Point2f> c
                 if(points[j].y>sud) sud=points[j].y;
             }
         }
-        Point2f ne=Point_(est,nord);
-        Point2f so=Point_(ovest,sud);
+        Point2f ne=Point2f(est,nord);
+        Point2f so=Point2f(ovest,sud);
+        extremes.push_back(vector<Point2f>{ne,so});
         rectangle(img,ne,so,colorTab[i],3);
     }
-    namedWindow("Clusters 2");
-    imshow("Clusters 2", img);
+    namedWindow("Bounding Box");
+    imshow("Bounding Box", img);
     waitKey(0);
-    cout<<points[0]<<"\n";
 }
