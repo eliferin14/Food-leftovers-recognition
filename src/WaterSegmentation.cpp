@@ -74,16 +74,21 @@ void waterSegmentation(Mat& img){
 
     marker+=1;
     
-    marker.setTo(0, unk == 255);
-    //marker[unk==255] = 0;
-   
+    marker.setTo(0, unk == 255); //marker[unk==255] = 0;
+    
+    //marker.convertTo(marker, CV_8UC1);
+    //namedWindow("Marker labelling", WINDOW_NORMAL);
+    //imshow("Marker labelling", marker);
+    //waitKey(0);   
 
     //Watershed
 
     watershed(img,marker);
     img.setTo(Vec3b(255,0,0), marker==-1);
-     namedWindow("Marker labelling", WINDOW_NORMAL);
-    imshow("Marker labelling", marker);
+    
+    img.convertTo(img, CV_8UC1);
+    namedWindow("Watershed", WINDOW_NORMAL);
+    imshow("Watershed", img);
     waitKey(0);
 
 }
