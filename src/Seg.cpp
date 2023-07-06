@@ -120,3 +120,30 @@ void slideWind(Mat src, Mat& dst, int kerSize){
 	bilateralFilter(src, dst, -1, 200,20);
 
 }
+
+void grabAlg(Mat src,Mat& dst, vector<Point2f> bb){
+    dst=src.clone();
+    Mat mask;
+    Mat backGround;
+    Mat foreGround;
+    int temp_x1, temp_x2, temp_y1, temp_y2;
+    temp_x1 = bb[0].x;
+    temp_y1 = bb[0].y;
+    temp_x2 = bb[1].x - temp_x1;
+    temp_y2 = bb[1].y - temp_y1;
+    Rect ret=Rect(temp_x1,temp_y1,temp_x2,temp_y2);
+    grabCut(dst,mask,ret, backGround,foreGround,5,GC_INIT_WITH_RECT);
+    //drawing Foreground on dst
+    for(int i=0;i<dst.rows;i++){
+        for(int j=0;j<dst.cols;j++){
+            if(mask.at<uchar>(i,j)==0 || mask.at<uchar>(i,j)==2){
+                dst.at<Vec3b>(i,j)[0]=0;
+                dst.at<Vec3b>(i,j)[1]=0;
+                dst.at<Vec3b>(i,j)[2]=0;
+            }
+        }
+    }
+    namedWindow("Mask",WINDOW_AUTOSIZE);
+    imshow("Mask",dst);
+    waitKey(0);
+}
