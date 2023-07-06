@@ -6,8 +6,6 @@ using namespace std;
 using namespace cv;
 
 void featureDetector(Mat& src, vector<KeyPoint>& keypoints, Mat& descriptors);
-void clusterKeyPoints(Mat& src);
-Mat Postprocess(Mat input_image);
 void ignoreIsolatedKeypoints(Mat& src, vector<KeyPoint>& keypoints, vector<KeyPoint>& filteredKeyPoints);
 
 void drawPath(Mat& img, vector<Point2f>& points, Scalar color);

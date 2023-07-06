@@ -124,7 +124,7 @@ void test_meanShift_keypoints() {
 }
 
 void test_findCentroids() {
-    Mat image = imread("../Food_leftover_dataset/tray1/food_image.jpg");
+    Mat image = imread("../Food_leftover_dataset/tray3/leftover3.jpg");
 
     vector<KeyPoint> keypoints;
     Mat descriptors;
@@ -136,7 +136,7 @@ void test_findCentroids() {
 
     meanShift_keypoints(image, keypoints, radius, threshold, paths);
 
-    double centroidRadius = 300;
+    double centroidRadius = 200;
     vector<Point2f> centroids;
     findCentroids(paths, centroidRadius, centroids);
     cout << centroids.size() << endl;
@@ -146,6 +146,7 @@ void test_findCentroids() {
     }
     for (int i=0; i<centroids.size(); i++) {
         circle(image, centroids[i], 50, Scalar(255,0,255), 3, 8, 0);
+        circle(image, centroids[i], centroidRadius, Scalar(0,0,0), 2, 8, 0);
     }
     showImage("Centroids", image);
 }

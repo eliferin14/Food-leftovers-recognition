@@ -17,8 +17,4 @@ int main(int argc, char** argv) {
     Mat descriptors;
     featureDetector(image, keypoints, descriptors);
 
-    clusterKeyPoints(image);
-
-    //cout << keypoints[0].pt << endl;
-
 }
