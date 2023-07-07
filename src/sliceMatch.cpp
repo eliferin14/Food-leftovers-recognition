@@ -242,3 +242,18 @@ void cicleMatcher2(Mat target, Mat candidate,int index) {
 	scores[index] += numMatches;
 	//cout << numMatches << endl;
 }
+
+void removeLowSaturationHSV(Mat& src, Mat& mask, double threshold) {
+
+	// Assuming the src is passed as BGR image, we convert it to HSV
+	Mat srcHSV;
+	cvtColor(src, srcHSV, COLOR_BGR2HSV);
+
+	// Select the saturation channel (the second)
+	vector<Mat> channels;
+	split(srcHSV, channels);
+	Mat srcS = channels[1];
+
+	// Remove all the pixel with saturation lower than the threshold and generate the mask
+	inRange(srcS, threshold, 255, mask);
+}
