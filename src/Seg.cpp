@@ -131,6 +131,7 @@ void grabAlg(Mat src,Mat& dst, vector<Point2f> bb){
     temp_y1 = bb[0].y;
     temp_x2 = bb[1].x - temp_x1;
     temp_y2 = bb[1].y - temp_y1;
+    //cout<<"DENTRO GRABCUT x, width: "<<temp_x1<<", "<<temp_x2<<"\ny,height: "<<temp_y1<<", "<<temp_y2<<"\n";
     Rect ret=Rect(temp_x1,temp_y1,temp_x2,temp_y2);
     grabCut(dst,mask,ret, backGround,foreGround,5,GC_INIT_WITH_RECT);
     //drawing Foreground on dst
@@ -143,7 +144,7 @@ void grabAlg(Mat src,Mat& dst, vector<Point2f> bb){
             }
         }
     }
-    namedWindow("Mask",WINDOW_AUTOSIZE);
-    imshow("Mask",dst);
-    waitKey(0);
+    //namedWindow("Mask",WINDOW_AUTOSIZE);
+    //imshow("Mask",dst);
+    //waitKey(0);
 }
