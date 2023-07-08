@@ -148,3 +148,17 @@ void grabAlg(Mat src,Mat& dst, vector<Point2f> bb){
     //imshow("Mask",dst);
     //waitKey(0);
 }
+
+void maskSovraposition(Mat src,Mat mask,Mat& dst){
+    dst=src.clone();
+    for(int i=0;i<src.rows;i++){
+        for(int j=0;j<src.cols;j++){
+            if(mask.at<uchar>(i,j)==0){
+                dst.at<Vec3b>(i,j)[0]=0;
+                dst.at<Vec3b>(i,j)[1]=0;
+                dst.at<Vec3b>(i,j)[2]=0;
+            }
+        }
+    }
+
+}

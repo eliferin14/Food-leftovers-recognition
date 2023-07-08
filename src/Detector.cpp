@@ -26,10 +26,66 @@ void featureDetector(Mat& src, vector<KeyPoint>& keypoints, Mat& descriptors) {
     if (flag) {
         Mat src_keypoints;
         drawKeypoints(src, keypoints, src_keypoints, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-        /*namedWindow("Keypoints");
+        namedWindow("Keypoints");
         imshow("Keypoints", src_keypoints);
-        waitKey(0);*/
+        waitKey(0);
     }
+}
+
+void clusterKeyPoints(Mat& src) {
+    // Pre-processing
+    // Mean Shift algorithm
+    const int kSpatialRadius = 15;
+    const int kColorRadius = 15;
+
+    // Convert to source 8-bit, 3-channel image
+    Mat lab_image;
+    cvtColor(src, lab_image, COLOR_BGR2Lab);
+
+    // defining parameters for Mean Shift algorithm
+    const int kMaxNumIter = 10;
+    TermCriteria criteria(TermCriteria::EPS | TermCriteria::MAX_ITER, kMaxNumIter, 1);
+
+    // Mean Shift algorithm
+    Mat filtered_image;
+    const int kMaxLevel = 6;
+    pyrMeanShiftFiltering(lab_image, filtered_image, kSpatialRadius, kColorRadius, kMaxLevel, criteria);
+
+    Mat segmented_image = Postprocess(filtered_image);
+
+    bool flag = 1;
+    if (flag) {
+        namedWindow("Segmented");
+        imshow("Segmented", segmented_image);
+        waitKey(0);
+    }
+}
+
+Mat Postprocess(Mat input_image){
+  
+  //Post-processing 
+  Mat bgr_image;
+  cvtColor(input_image, bgr_image, COLOR_Lab2BGR);
+
+	// Mask generation 
+	Mat gray_image;
+	cvtColor(bgr_image, gray_image, COLOR_BGR2GRAY);
+  const Scalar kLowThreshold = Scalar(0, 65, 100);
+  const Scalar kHighThreshold = Scalar(85, 170, 224);
+	inRange(bgr_image, kLowThreshold, kHighThreshold, gray_image);
+
+	// Morphological operations
+  Mat output_image;
+  const int kKernelSize = 3;
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(kKernelSize, kKernelSize));
+
+  // Open operation
+	morphologyEx(gray_image, output_image, MORPH_OPEN, kernel);
+
+  // Close operation
+	morphologyEx(output_image, output_image, MORPH_CLOSE, kernel);
+
+  return output_image;
 }
 
 double pointsDistance(Point p1, Point p2) {
@@ -149,12 +205,13 @@ void meanShift_keypoints(Mat& src, vector<KeyPoint>& keypoints, double radius, d
 void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f>& centroids) {
     // Scan all the paths
     for (int i=0; i<paths.size(); i++) {
+        vector<Point2f> path = paths[i];
 
         // If the path has only 1 point, ignore it
-        if (paths[i].size()==1) continue;
+        if (path.size()==1) continue;
 
         // Otherwise we select the final point
-        Point2f finalPoint = paths[i].back();
+        Point2f finalPoint = path.back();
 
         // We check if the final point is close to a point that is already a centroid
         // If there are no close centroids, we include it in the vector. Otherwise we ignore it
@@ -162,14 +219,24 @@ void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f
         for (int j=0; j<centroids.size(); j++) {
             if (pointsDistance(centroids[j], finalPoint) < radius) {
                 isClose = true;
-
-                // We update the path by adding the centroid as last element
-                paths[i].push_back(centroids[j]);
-
                 break;
             }
         }
         if ( !isClose ) centroids.push_back(finalPoint);
-
     }
+}
+
+void removeLowSaturationHSV(Mat& src, Mat& mask, double threshold) {
+
+	// Assuming the src is passed as BGR image, we convert it to HSV
+	Mat srcHSV;
+	cvtColor(src, srcHSV, COLOR_BGR2HSV);
+
+	// Select the saturation channel (the second)
+	vector<Mat> channels;
+	split(srcHSV, channels);
+	Mat srcS = channels[1];
+
+	// Remove all the pixel with saturation lower than the threshold and generate the mask
+	inRange(srcS, threshold, 255, mask);
 }

@@ -6,6 +6,8 @@ using namespace std;
 using namespace cv;
 
 void featureDetector(Mat& src, vector<KeyPoint>& keypoints, Mat& descriptors);
+void clusterKeyPoints(Mat& src);
+Mat Postprocess(Mat input_image);
 void ignoreIsolatedKeypoints(Mat& src, vector<KeyPoint>& keypoints, vector<KeyPoint>& filteredKeyPoints);
 
 void drawPath(Mat& img, vector<Point2f>& points, Scalar color);
@@ -18,3 +20,5 @@ void meanShift_onePoint(vector<KeyPoint>& keypoints, Point2f startingPoint, doub
 void meanShift_grid(Mat& src, vector<KeyPoint>& keypoints, double radius, double threshold, vector<vector<Point2f>>& paths, int gridRows, int gridCols);
 void meanShift_keypoints(Mat& src, vector<KeyPoint>& keypoints, double radius, double threshold, vector<vector<Point2f>>& paths);
 void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f>& centroids);
+
+void removeLowSaturationHSV(Mat& src, Mat& mask, double threshold);
