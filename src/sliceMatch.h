@@ -10,11 +10,16 @@ void clusterPruning(vector<Point2f>& centers, vector<int> labels,int threshold);
 void imageSlicer(vector<vector<Point2f>> coordinatePoints,Mat originalImage ,vector<Mat>& slicedImages);
 void slicerViewer(vector<Mat>srcs,vector<vector<KeyPoint>>& keys,vector<Mat>& descriptors);
 void slicedFeatureViewer(vector<Mat> slicedImages, vector<vector<KeyPoint>>slicedKeypoints);
-void matcher(Mat target, vector<int>& probability);
-void cicleMatcher(Mat target, Mat candidate, vector<int>& score);
-void matcherInitializer();
-void classifier(Mat target);
-void bestScore();
-void cleanScores();
-void cicleMatcher2(Mat target, Mat candidate, int index);
-void getScores();
+
+void classifier(Mat target,Point2f center,String& composition);
+float meanCalculator(Mat target,int kSize,Point2f center);
+
+//void matcher(Mat target, vector<int>& probability);
+//void matcherInitializer();
+//void classifier(Mat target,vector<float>& personalScores);
+//void bestScore();
+//void cleanScores();
+//void cicleMatcher(Mat target, Mat candidate, int index);
+//void getScores();
+//void normalizeScores();
+//void findBestLabel(vector<vector<float>> allScores,int numImages);

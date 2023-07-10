@@ -118,128 +118,213 @@ void slicedFeatureViewer(vector<Mat> slicedImages,vector<vector<KeyPoint>>sliced
 	}
 }
 
-void cicleMatcher(Mat target, Mat candidate, vector<int>& score) {
-	vector<KeyPoint> srcKeyPoints;
-	vector<KeyPoint> trgKeyPoints;
-	Mat srcDescriptors;
-	Mat trgDescriptors;
-	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
-	featureDetector(target, trgKeyPoints, trgDescriptors);
-	featureDetector(candidate, srcKeyPoints, srcDescriptors);			//This is gonna be changed with a constant array of images
+void classifier(Mat target,Point2f center, String& composition) {
+	Mat cloned[3];
+	//composition += "The plate contains: ";
+	split(target, cloned);
+	//I'll use just the second channel since it is the one who brings the most information
+	if ((meanCalculator(cloned[2], 9,center) >= 195 && meanCalculator(cloned[2], 9,center) <= 196)
+		|| (meanCalculator(cloned[2], 9, center) >= 79 && meanCalculator(cloned[2], 9, center) <= 80) 
+		|| (meanCalculator(cloned[2], 9, center) >= 126 && meanCalculator(cloned[2], 9, center) <= 126.5)) {
+		namedWindow("bread", WINDOW_NORMAL);
+		imshow("bread", target);
+		//cout << "it's bread " << endl;
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		composition += "Bread, ";
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 130 && meanCalculator(cloned[2], 9, center) <= 131)) {
+		namedWindow("Pasta Pesto", WINDOW_NORMAL);
+		imshow("Pasta Pesto", target);
+		//cout << "it's Pasta with Pesto " << endl;
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		composition += "Pasta Pesto, ";
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 82 && meanCalculator(cloned[2], 9, center) <= 83)
+		|| (meanCalculator(cloned[2], 9, center) >= 99 && meanCalculator(cloned[2], 9, center) <= 100)) {
+		namedWindow("Pasta Tomato", WINDOW_NORMAL);
+		imshow("Pasta Tomato", target);
+		//cout << "it's Pasta with Tomato Sauce " << endl;
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		composition += "Pasta Tomato, ";
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 118 && meanCalculator(cloned[2], 9, center) <= 119)) {
+		namedWindow("Pasta Meat", WINDOW_NORMAL);
+		imshow("Pasta Meat", target);
+		//cout << "it's Pasta with Meat Sauce " << endl;
+		composition += "Pasta Meat, ";
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 75 && meanCalculator(cloned[2], 9, center) <= 76)
+		|| (meanCalculator(cloned[2], 9, center) >= 86 && meanCalculator(cloned[2], 9, center) <= 87)
+		|| (meanCalculator(cloned[2], 9, center) >= 122 && meanCalculator(cloned[2], 9, center) <= 123)) {
+		namedWindow("Pasta with clums", WINDOW_NORMAL);
+		imshow("Pasta with clums", target);
+		//cout << "it's Pasta with clums " << endl;
+		composition += "Pasta with clums, ";
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 141 && meanCalculator(cloned[2], 9, center) <= 142)) {
+		namedWindow("Rice", WINDOW_NORMAL);
+		imshow("Rice", target);
+		//cout << "it's Rice " << endl;
+		composition += "Rice, ";
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 126.5 && meanCalculator(cloned[2], 9, center) <= 127)
+		|| (meanCalculator(cloned[2], 9, center) >= 101 && meanCalculator(cloned[2], 9, center) <= 102)
+		|| (meanCalculator(cloned[2], 9, center) >= 121 && meanCalculator(cloned[2], 9, center) <= 122)
+		|| (meanCalculator(cloned[2], 9, center) >= 86 && meanCalculator(cloned[2], 9, center) <= 87)
+		|| (meanCalculator(cloned[2], 9, center) >= 46 && meanCalculator(cloned[2], 9, center) <= 47)
+		|| (meanCalculator(cloned[2], 9, center) >= 107 && meanCalculator(cloned[2], 9, center) <= 108)) {
+		namedWindow("Salad", WINDOW_NORMAL);
+		imshow("Salad", target);
+		//cout << "it's Salad " << endl;
+		composition += "Salad, ";
+		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	}
+	else {
+		namedWindow("something", WINDOW_NORMAL);
+		imshow("something", target);
+		composition += "Something, ";
+		//cout << "it's something " << endl;
+		cout << " value " << meanCalculator(cloned[2],9,center) << endl;
+	}
+}
 
-	//OpenCV tutorial
-	std::vector< std::vector<DMatch> > knn_matches;
-	matcher->knnMatch(trgDescriptors, srcDescriptors, knn_matches, 2);
-	const float ratio_thresh = 0.75f;
-	std::vector<DMatch> good_matches;
-	int numMatches = 0;
-	for (size_t i = 0; i < knn_matches.size(); i++)
-	{
-		if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
-		{
-			good_matches.push_back(knn_matches[i][0]);
-			numMatches++;
+float meanCalculator(Mat target,int kSize,Point2f center) {
+	float average=0;
+	//if(center.x > target.cols || center.y > target.rows){}
+	//else {
+		for (int i = -kSize / 2; i < kSize / 2; i++) {
+			for (int j = -kSize / 2; j < kSize / 2; j++) {
+				average += target.at<uchar>(int(target.rows/2) + i, int(target.cols/2) + i);
+			}
 		}
-	}
-	score.push_back(numMatches);
-	cout << numMatches << endl;
-}
-const Mat pastaSugo = imread("../ourDataset/pasta1.jpg");
-const Mat insalata = imread("../ourDataset/insalata3.jpg");
-const Mat patate = imread("../ourDataset/patate2.jpg");
-const Mat carne = imread("../ourDataset/carne2.jpg");
-const int dataSize = 5;
-vector<Mat> pasta;
-vector<Mat> meat;
-vector<Mat> salad;
-vector<Mat> potatoes;
-const int numClasses = 4;//Soon it will be 13 :)
-vector<int> scores(numClasses);
-vector<int> checks(numClasses);
-const vector<String> labels = {"Pasta","Meat","Salad","Potatoes"};
-vector<vector<Mat>> allClasses;
-void matcherInitializer() {
-	for (int i = 0; i < dataSize; i++) {
-		pasta.push_back(imread("../ourDataset/pasta" + to_string(i+1) + ".jpg"));
-		meat.push_back(imread("../ourDataset/carne" + to_string(i+1) + ".jpg"));
-		salad.push_back(imread("../ourDataset/insalata" + to_string(i+1) + ".jpg"));
-		potatoes.push_back(imread("../ourDataset/patate" + to_string(i+1) + ".jpg"));
-	}
-	allClasses.push_back(pasta);
-	allClasses.push_back(meat);
-	allClasses.push_back(salad);
-	allClasses.push_back(potatoes);
+	//}
+	return average/(kSize*kSize);
 }
 
-void matcher(Mat target,vector<int> &probability) {
-	matcherInitializer();
-	vector<Mat> candidates = { insalata,patate ,pastaSugo,carne};
-	for (int i = 0; i < candidates.size(); i++) {
-		cicleMatcher(target,candidates[i],probability);
-	}
-}
 
-void classifier(Mat target) {
-	//The number 4 is gonna be changed into a constant soon
-	for (int classes = 0; classes < numClasses;classes++) {
-		for (int samples = 0; samples < numClasses; samples++) {
-			cicleMatcher2(target,allClasses[classes][samples],classes);
-		}
-	}
-	getScores();
-	bestScore();
-	cleanScores();
-}
+//const int dataSize = 5;
+//vector<Mat> pasta;
+//vector<Mat> meat;
+//vector<Mat> salad;
+//vector<Mat> potatoes;
+//vector<Mat> bread;
+//const int numClasses = 5;//Soon it will be 13 :)
+//vector<float> scores(numClasses);
+//vector<int> checks(numClasses);
+//const vector<String> labels = {"Pasta","Meat","Salad","Potatoes","Bread"};
+//vector<vector<Mat>> allClasses;
+//void matcherInitializer() {
+//	for (int i = 0; i < dataSize; i++) {
+//		pasta.push_back(imread("../ourDataset/pasta" + to_string(i+1) + ".jpg"));
+//		meat.push_back(imread("../ourDataset/carne" + to_string(i+1) + ".jpg"));
+//		salad.push_back(imread("../ourDataset/insalata" + to_string(i+1) + ".jpg"));
+//		potatoes.push_back(imread("../ourDataset/patate" + to_string(i+1) + ".jpg"));
+//		bread.push_back(imread("../ourDataset/pane" + to_string(i+1) + ".jpg"));
+//	}
+//	allClasses.push_back(pasta);
+//	allClasses.push_back(meat);
+//	allClasses.push_back(salad);
+//	allClasses.push_back(potatoes);
+//	allClasses.push_back(bread);
+//}
 
-void getScores() {
-	for (int i = 0; i < scores.size(); i++)
-		cout << labels[i] << " got a score of " << scores[i] << endl;
-}
-void cleanScores() {
-	for (int i = 0; i < scores.size(); i++) {
-		scores[i] = 0;
-		/*checks[i] = 0;*/
-	}
-}
-
-void bestScore() {
-	int currentMax = 0;
-	int index = 0;
-	for (int i = 0; i < scores.size(); i++) {
-		if (currentMax < scores[i] && checks[i]!=1) {
-			currentMax = scores[i];
-			index = i;
-		}
-	}
-	checks[index] = 1;
-	cout << "The subject contains: " << labels[index] << endl;
-	cout << "And it got a score of: " << currentMax << endl;
-}
-
-void cicleMatcher2(Mat target, Mat candidate,int index) {
-	vector<KeyPoint> srcKeyPoints;
-	vector<KeyPoint> trgKeyPoints;
-	Mat srcDescriptors;
-	Mat trgDescriptors;
-	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
-	featureDetector(target, trgKeyPoints, trgDescriptors);
-	featureDetector(candidate, srcKeyPoints, srcDescriptors);			//This is gonna be changed with a constant array of images
-
-	//OpenCV tutorial
-	std::vector< std::vector<DMatch> > knn_matches;
-	matcher->knnMatch(trgDescriptors, srcDescriptors, knn_matches, 2);
-	const float ratio_thresh = 0.95f;
-	std::vector<DMatch> good_matches;
-	int numMatches = 0;
-	for (size_t i = 0; i < knn_matches.size(); i++)
-	{
-		if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
-		{
-			good_matches.push_back(knn_matches[i][0]);
-			numMatches++;
-		}
-	}
-	scores[index] += numMatches;
-	//cout << numMatches << endl;
-}
-
+//void classifier(Mat target, vector<float>& personalScores) {
+//	//The number 4 is gonna be changed into a constant soon
+//	for (int classes = 0; classes < numClasses;classes++) {
+//		for (int samples = 0; samples < numClasses; samples++) {
+//			cicleMatcher(target,allClasses[classes][samples],classes);
+//		}
+//	}
+//	//int area = target.rows*target.cols*0.01;
+//	normalizeScores();
+//	for (int i = 0; i < scores.size(); i++)
+//		personalScores.push_back(scores[i]);
+//	getScores();
+//	bestScore();
+//	cleanScores();
+//}
+//
+//void findBestLabel(vector<vector<float>> allScores,int num) {
+//	vector<float> bestLabels(num);
+//	vector<int> classScores(num);
+//	vector<int> imageItGotFound(num);
+//	for (int i = 0; i < allScores[0].size(); i++) {
+//		for (int j = 0; j < num; j++) {
+//			if (bestLabels[i] < allScores[j][i]) {
+//				bestLabels[i] = allScores[j][i];
+//				classScores[i] = i;
+//				imageItGotFound[i] = j;
+//			}
+//		}
+//	}
+//	for (int i = 0; i < num; i++) {
+//		cout << "Best label for class " << classScores[i] << " is " << bestLabels[i] << " leading to label " << labels[classScores[i]] <<endl;
+//		cout << "It got found in image " << imageItGotFound[i]<<endl;
+//	}
+//}
+//
+//void getScores() {
+//	for (int i = 0; i < scores.size(); i++)
+//		cout << labels[i] << " got a score of " << scores[i] << endl;
+//}
+//void cleanScores() {
+//	for (int i = 0; i < scores.size(); i++) {
+//		scores[i] = 0;
+//	}
+//}
+//
+//void normalizeScores() {
+//	for (int i = 0; i < scores.size(); i++)
+//		scores[i] = scores[i] / dataSize;
+//}
+//
+//void bestScore() {
+//	float currentMax = 0;
+//	int index = 0;
+//	for (int i = 0; i < scores.size(); i++) {
+//		if (currentMax < scores[i] && checks[i]!=1) {
+//			currentMax = scores[i];
+//			index = i;
+//		}
+//	}
+//	checks[index] = 1;
+//	cout << "The subject contains: " << labels[index] << endl;
+//	cout << "And it got a score of: " << currentMax << endl;
+//}
+//
+//void cicleMatcher(Mat target, Mat candidate,int index) {
+//	vector<KeyPoint> srcKeyPoints;
+//	vector<KeyPoint> trgKeyPoints;
+//	Mat srcDescriptors;
+//	Mat trgDescriptors;
+//	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::BRUTEFORCE_L1);
+//	featureDetector(target, trgKeyPoints, trgDescriptors);
+//	featureDetector(candidate, srcKeyPoints, srcDescriptors);			//This is gonna be changed with a constant array of images
+//
+//	//OpenCV tutorial
+//	std::vector< std::vector<DMatch> > knn_matches;
+//	matcher->knnMatch(trgDescriptors, srcDescriptors, knn_matches, 20);
+//	const float ratio_thresh = 0.80f;
+//	std::vector<DMatch> good_matches;
+//	float numMatches = 0;
+//	for (size_t i = 0; i < knn_matches.size(); i++)
+//	{
+//		if (knn_matches[i][0].distance <= ratio_thresh * knn_matches[i][1].distance)
+//		{
+//			good_matches.push_back(knn_matches[i][0]);
+//			numMatches++;
+//		}
+//	}
+//	scores[index] += numMatches;//trgKeyPoints.size();
+//	//cout << numMatches << endl;
+//}
