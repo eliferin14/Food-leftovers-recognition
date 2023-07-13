@@ -120,81 +120,97 @@ void slicedFeatureViewer(vector<Mat> slicedImages,vector<vector<KeyPoint>>sliced
 
 void classifier(Mat target,Point2f center, String& composition) {
 	Mat cloned[3];
-	//composition += "The plate contains: ";
 	split(target, cloned);
 	//I'll use just the second channel since it is the one who brings the most information
-	if ((meanCalculator(cloned[2], 9,center) >= 195 && meanCalculator(cloned[2], 9,center) <= 196)
+	if ((meanCalculator(cloned[1], 9, center) >= 25 && meanCalculator(cloned[1], 9, center) <= 26)
+		|| (meanCalculator(cloned[2], 9, center) >= 107 && meanCalculator(cloned[2], 9, center) <= 108)
+		|| (meanCalculator(cloned[1], 9, center) >= 11 && meanCalculator(cloned[1], 9, center) <= 13)
+		|| (meanCalculator(cloned[1], 9, center) >= 5 && meanCalculator(cloned[1], 9, center) <= 6)
+		|| (meanCalculator(cloned[1], 9, center) >= 35 && meanCalculator(cloned[1], 9, center) <= 36)
+		|| (meanCalculator(cloned[1], 9, center) >= 43 && meanCalculator(cloned[1], 9, center) <= 44)) {
+		namedWindow("Salad", WINDOW_NORMAL);
+		imshow("Salad", target);
+		composition += "Salad, ";
+		//cout << "value " << meanCalculator(cloned[1], 9, center) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9,center) >= 195 && meanCalculator(cloned[2], 9,center) <= 196)
 		|| (meanCalculator(cloned[2], 9, center) >= 79 && meanCalculator(cloned[2], 9, center) <= 80) 
 		|| (meanCalculator(cloned[2], 9, center) >= 126 && meanCalculator(cloned[2], 9, center) <= 126.5)) {
 		namedWindow("bread", WINDOW_NORMAL);
 		imshow("bread", target);
-		//cout << "it's bread " << endl;
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
 		composition += "Bread, ";
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
 	}
 	else if ((meanCalculator(cloned[2], 9, center) >= 130 && meanCalculator(cloned[2], 9, center) <= 131)) {
 		namedWindow("Pasta Pesto", WINDOW_NORMAL);
 		imshow("Pasta Pesto", target);
-		//cout << "it's Pasta with Pesto " << endl;
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
 		composition += "Pasta Pesto, ";
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
 	}
 	else if ((meanCalculator(cloned[2], 9, center) >= 82 && meanCalculator(cloned[2], 9, center) <= 83)
 		|| (meanCalculator(cloned[2], 9, center) >= 99 && meanCalculator(cloned[2], 9, center) <= 100)) {
 		namedWindow("Pasta Tomato", WINDOW_NORMAL);
 		imshow("Pasta Tomato", target);
-		//cout << "it's Pasta with Tomato Sauce " << endl;
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
+		//cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
 		composition += "Pasta Tomato, ";
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
 	}
 	else if ((meanCalculator(cloned[2], 9, center) >= 118 && meanCalculator(cloned[2], 9, center) <= 119)) {
 		namedWindow("Pasta Meat", WINDOW_NORMAL);
 		imshow("Pasta Meat", target);
-		//cout << "it's Pasta with Meat Sauce " << endl;
 		composition += "Pasta Meat, ";
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
 	}
 	else if ((meanCalculator(cloned[2], 9, center) >= 75 && meanCalculator(cloned[2], 9, center) <= 76)
 		|| (meanCalculator(cloned[2], 9, center) >= 86 && meanCalculator(cloned[2], 9, center) <= 87)
 		|| (meanCalculator(cloned[2], 9, center) >= 122 && meanCalculator(cloned[2], 9, center) <= 123)) {
 		namedWindow("Pasta with clums", WINDOW_NORMAL);
 		imshow("Pasta with clums", target);
-		//cout << "it's Pasta with clums " << endl;
 		composition += "Pasta with clums, ";
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
 	}
 	else if ((meanCalculator(cloned[2], 9, center) >= 141 && meanCalculator(cloned[2], 9, center) <= 142)) {
 		namedWindow("Rice", WINDOW_NORMAL);
 		imshow("Rice", target);
-		//cout << "it's Rice " << endl;
 		composition += "Rice, ";
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
 	}
-	else if ((meanCalculator(cloned[2], 9, center) >= 126.5 && meanCalculator(cloned[2], 9, center) <= 127)
-		|| (meanCalculator(cloned[2], 9, center) >= 101 && meanCalculator(cloned[2], 9, center) <= 102)
-		|| (meanCalculator(cloned[2], 9, center) >= 121 && meanCalculator(cloned[2], 9, center) <= 122)
-		|| (meanCalculator(cloned[2], 9, center) >= 86 && meanCalculator(cloned[2], 9, center) <= 87)
-		|| (meanCalculator(cloned[2], 9, center) >= 46 && meanCalculator(cloned[2], 9, center) <= 47)
-		|| (meanCalculator(cloned[2], 9, center) >= 107 && meanCalculator(cloned[2], 9, center) <= 108)) {
-		namedWindow("Salad", WINDOW_NORMAL);
-		imshow("Salad", target);
-		//cout << "it's Salad " << endl;
-		composition += "Salad, ";
-		cout << " value " << meanCalculator(cloned[2], 9, center) << endl;
-		//cout << "channel " << i << " value " << int(cloned[i].at<uchar>(int(cloned[i].rows / 2), int(cloned[i].cols / 2))) << endl;
+	else if ((meanCalculator(cloned[2], 9, center) >= 60 && meanCalculator(cloned[2], 9, center) <= 63)) {
+		namedWindow("Meat&Beans", WINDOW_NORMAL);
+		imshow("Meat&Beans", target);
+		composition += "Pork cutlet, Beans, ";
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 26 && meanCalculator(cloned[2], 9, center) <= 27.5)) {
+		namedWindow("Sea salad", WINDOW_NORMAL);
+		imshow("Sea salad", target);
+		composition += "Sea salad, Beans, Potatoes, ";
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 128 && meanCalculator(cloned[2], 9, center) <= 129.5)) {
+		namedWindow("Rabbit", WINDOW_NORMAL);
+		imshow("Rabbit", target);
+		composition += "Rabbit, ";
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 132 && meanCalculator(cloned[2], 9, center) <= 133.5)) {
+		namedWindow("Rabbit&Beans", WINDOW_NORMAL);
+		imshow("Rabbit&Beans", target);
+		composition += "Rabbit, Beans, ";
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
+	}
+	else if ((meanCalculator(cloned[2], 9, center) >= 138 && meanCalculator(cloned[2], 9, center) <= 139)
+		|| (meanCalculator(cloned[2], 9, center) >= 129 && meanCalculator(cloned[2], 9, center) <= 130.5)
+		|| (meanCalculator(cloned[2], 9, center) >= 122.5 && meanCalculator(cloned[2], 9, center) <= 124)) {
+		namedWindow("FIsh&Potatoes", WINDOW_NORMAL);
+		imshow("FIsh&Potatoes", target);
+		composition += "Fish cutlet, Basil Potatoes, ";
+		//cout << "value " << meanCalculator(cloned[2], 9, center) << endl;
 	}
 	else {
-		namedWindow("something", WINDOW_NORMAL);
-		imshow("something", target);
-		composition += "Something, ";
-		//cout << "it's something " << endl;
-		cout << " value " << meanCalculator(cloned[2],9,center) << endl;
+		namedWindow("Pasta with clums", WINDOW_NORMAL);
+		imshow("Pasta with clums", target);
+		composition += "Pasta with clums, ";
+		//cout << "value " << meanCalculator(cloned[2],9,center) << endl;
 	}
 }
 
