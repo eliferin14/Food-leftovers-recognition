@@ -1,4 +1,5 @@
 #include <iostream>
+#include "MeanAveragePrecision.hpp"
 #include "DatasetLoader.hpp"
 
 void loadLabels_test(string filename) {
@@ -28,7 +29,17 @@ void TrayData_bb_test(string path) {
     cout << tray;
 }
 
+void getPrecisionRecall_test() {
+    Rect rect1(100, 100, 200, 200);
+    Rect rect2(200, 200, 300, 300);
+    BoundingBox bb1 = BoundingBox(1, rect1);
+    BoundingBox bb2 = BoundingBox(1, rect2);
+
+    double precision;
+    double recall;
+    getPrecisionRecall(bb1, bb2, precision, recall);
+}
+
 int main(int argc, char** argv) {
-    string path = argv[1];
-    TrayData_bb_test(path);
+    getPrecisionRecall_test();
 }

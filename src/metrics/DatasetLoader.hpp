@@ -3,13 +3,17 @@
 
 // The labels for each tray are stored in the file "labels.txt" inside each tray's folder
 
+#ifndef DS_LOADER
+#define DS_LOADER
+
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include "opencv2/opencv.hpp"
 #include <fstream>
 
 using namespace std;
 using namespace cv;
 
+// Contains all the information we need about a bounding box, namely its position, dimension, and label of what it contains
 class BoundingBox {
 public:
     int label;
@@ -18,6 +22,7 @@ public:
     friend ostream& operator<<(ostream& os, const BoundingBox& bb);
 };
 
+// Contains all the information related to a SINGLE tray
 class TrayData {
 public:
     string path;
@@ -32,5 +37,8 @@ public:
     friend ostream& operator<<(ostream& os, const TrayData& tray);
 };
 
+// Helper functions
 void loadLabels_singleTray(string filename, vector<int>& labels);
 void loadLabels(string foldername, vector<vector<int>>& labels);
+
+#endif
