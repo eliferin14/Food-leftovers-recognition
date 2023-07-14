@@ -22,7 +22,7 @@ void featureDetector(Mat& src, vector<KeyPoint>& keypoints, Mat& descriptors) {
     detectorPtr->detect(src, keypoints);
     detectorPtr->compute(src, keypoints, descriptors);
 
-    bool flag = 1;
+    bool flag = 0;
     if (flag) {
         Mat src_keypoints;
         drawKeypoints(src, keypoints, src_keypoints, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
@@ -227,6 +227,7 @@ void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f
 }
 
 void removeLowSaturationHSV(Mat& src, Mat& mask, double threshold) {
+    mask = Mat();
 
 	// Assuming the src is passed as BGR image, we convert it to HSV
 	Mat srcHSV;
@@ -239,4 +240,34 @@ void removeLowSaturationHSV(Mat& src, Mat& mask, double threshold) {
 
 	// Remove all the pixel with saturation lower than the threshold and generate the mask
 	inRange(srcS, threshold, 255, mask);
+
+    bool flag = false;
+    if (flag) {
+        showImage("Saturation", srcS);
+        showHistogram("Saturation Histogram", srcS);
+    }
+}
+
+void removeLowSaturationHSV_otsu(Mat& src, Mat& mask) {
+
+	// Assuming the src is passed as BGR image, we convert it to HSV
+	Mat srcHSV;
+	cvtColor(src, srcHSV, COLOR_BGR2HLS);
+
+	// Select the saturation channel (the second)
+	vector<Mat> channels;
+	split(srcHSV, channels);
+	Mat srcS = channels[2];
+    
+    // Blur?
+    GaussianBlur(srcS, srcS, Size(5,5), 0);
+
+    Mat hist;
+    drawHistogram(srcS, hist, 512, 256, 256);
+    showImage("Saturation histogram", hist);
+
+    // Otsu threshold
+    long double otsuThreshold = threshold(srcS, mask, 0, 255, THRESH_OTSU);
+    cout << "Otsu optimal threshold: " << otsuThreshold << endl;
+
 }

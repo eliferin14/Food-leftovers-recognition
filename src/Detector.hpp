@@ -1,6 +1,10 @@
+#ifndef DETECTOR
+#define DETECTOR
+
 #include "opencv2/opencv.hpp"
 #include "opencv2/xfeatures2d.hpp"
 #include <opencv2/imgproc.hpp>
+#include "utils.hpp"
 
 using namespace std;
 using namespace cv;
@@ -22,3 +26,7 @@ void meanShift_keypoints(Mat& src, vector<KeyPoint>& keypoints, double radius, d
 void findCentroids(vector<vector<Point2f>>& paths, double radius, vector<Point2f>& centroids);
 
 void removeLowSaturationHSV(Mat& src, Mat& mask, double threshold);
+void removeHighHueHSV(Mat& src, Mat& mask, double threshold);
+void removeLowSaturationHSV_otsu(Mat& src, Mat& mask);
+
+#endif
