@@ -245,7 +245,6 @@ void slideClassifier(Mat& target, int numIntervals,bool flag) {
 			for (int i = int((target.rows * numWindowX) / numIntervals); i < int((target.rows * (numWindowX + 1)) / numIntervals); i++) {
 				for (int j = int((target.cols * numWindowY) / numIntervals); j <int((target.cols * (numWindowY + 1)) / numIntervals); j++) {
 					averages[0] += target.at<Vec3b>(i, j)[0];
-					//cout << int(target.at<Vec3b>(i, j)[0]) << endl;
 					averages[1] += target.at<Vec3b>(i, j)[1];
 					averages[2] += target.at<Vec3b>(i, j)[2];
 				}
@@ -256,43 +255,56 @@ void slideClassifier(Mat& target, int numIntervals,bool flag) {
 			//Bread 0,Pasta Pesto 1,Beans 2 ,Pork Cutlet 3,Salad 4 ,fish chutlet 5, potatoes 6 ,pasta tomato 7
 			//Rabbit 8, Rice 9, Pasta Meat 10 ,Pasta Clums 11 , SeaFood salad 12
 			if (averages[2] >= 186 && averages[2] <= 234			//Bread check
-				&& averages[0] >= 71 && averages[0] <= 199)
+				&& averages[0] >= 71 && averages[0] <= 199
+				&& averages[1] >= 39 && averages[1] <= 226)
 				counters[0]++;
 			if (averages[2] >= 62 && averages[2] <= 168				//Pesto check
-				&& averages[0] >= 13 && averages[0] <= 96)
+				&& averages[0] >= 13 && averages[0] <= 96
+				&& averages[1] >= 31 && averages[1] <= 215)
 				counters[1]++;
 			if(averages[2] >= 116 && averages[2] <= 180				//Beans check
-				&& averages[0] >= 55 && averages[0] <= 148)
+				&& averages[0] >= 55 && averages[0] <= 148
+				&& averages[1] >= 18 && averages[1] <= 126)
 				counters[2]++;
 			if(averages[2] >= 71 && averages[2] <= 153				//Pork check
-				&& averages[0] >= 25 && averages[0] <= 122)
+				&& averages[0] >= 25 && averages[0] <= 122
+				&& averages[1] >= 50 && averages[1] <= 161)
 				counters[3]++;
 			if (averages[2] >= 73 && averages[2] <= 235				//Salad check
-				&& averages[0] >= 6 && averages[0] <= 77)
+				&& averages[0] >= 6 && averages[0] <= 77
+				&& averages[1] >= 13 && averages[1] <= 169)
 				counters[4]++;
 			if (averages[2] >= 147 && averages[2] <= 243			//fishC check
-				&& averages[0] >= 45 && averages[0] <= 200)
+				&& averages[0] >= 45 && averages[0] <= 200
+				&& averages[1] >= 62 && averages[1] <= 243)
 				counters[5]++;
 			if (averages[2] >= 162 && averages[2] <= 236			//Potatoes check
-				&& averages[0] >= 26 && averages[0] <= 147)
+				&& averages[0] >= 26 && averages[0] <= 147
+				&& averages[1] >= 68 && averages[1] <= 217)
 				counters[6]++;
 			if (averages[2] >= 89 && averages[2] <= 221				//Tomato check
-				&& averages[0] >= 1 && averages[0] <= 90)
+				&& averages[0] >= 1 && averages[0] <= 90
+				&& averages[1] >= 3 && averages[1] <= 195)
 				counters[7]++;
 			if (averages[2] >= 89 && averages[2] <= 221				//Rabbit check
-				&& averages[0] >= 53 && averages[0] <= 191)
+				&& averages[0] >= 53 && averages[0] <= 191
+				&& averages[1] >= 14 && averages[1] <= 191)
 				counters[8]++;
 			if (averages[2] >= 91 && averages[2] <= 196				//Rice check
-				&& averages[0] >= 35 && averages[0] <= 130)
+				&& averages[0] >= 35 && averages[0] <= 130
+				&& averages[1] >= 55 && averages[1] <= 162)
 				counters[9]++;
 			if (averages[2] >= 53 && averages[2] <= 204				//PastaM check
-				&& averages[0] >= 5 && averages[0] <= 175)
+				&& averages[0] >= 5 && averages[0] <= 175
+				&& averages[1] >= 25 && averages[1] <= 190)
 				counters[10]++;
 			if (averages[2] >= 78 && averages[2] <= 227				//PastaC check
-				&& averages[0] >= 4 && averages[0] <= 72)
+				&& averages[0] >= 4 && averages[0] <= 72
+				&& averages[1] >= 33 && averages[1] <= 152)
 				counters[11]++;
 			if (averages[2] >= 72 && averages[2] <= 182				//SeaSalad check
-				&& averages[0] >= 10 && averages[0] <= 243)
+				&& averages[0] >= 10 && averages[0] <= 243
+				&& averages[1] >= 19 && averages[1] <= 223)
 				counters[12]++;
 			int temp_x1 = sizeIntervalX * (numWindowX);
 			int temp_y1 = sizeIntervalY * (numWindowY);
@@ -300,24 +312,9 @@ void slideClassifier(Mat& target, int numIntervals,bool flag) {
 			int temp_y2 = sizeIntervalY;
 			Mat fragment;
 			fragment = target(Rect(temp_x1, temp_y1, temp_x2, temp_y2));
-			//if (numCl[0]/(sizeIntervalX*sizeIntervalY) > 0.5) {
-			//	/*namedWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), WINDOW_NORMAL);
-			//	imshow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), fragment);*/
-			//	counter++;
-			//	/*waitKey(0);
-			//	destroyWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1));*/
-			//}
-			//if (numCl[1] / (sizeIntervalX * sizeIntervalY) > 0.5) {
-			//	/*namedWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), WINDOW_NORMAL);
-			//	imshow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), fragment);*/
-			//	counter1++;
-			//	/*waitKey(0);
-			//	destroyWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1));*/
-			//}
-			//numCl[0] = 0;
 			//std::cout << "Blue average: " << averages[0] << endl;
 			//std::cout << "Green average: " << averages[1] << endl;
-			//std::cout << "Red average: " << averages[2] << endl;
+			std::cout << "Red average: " << averages[2] << endl;
 			if (flag) {
 				namedWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), WINDOW_NORMAL);
 				imshow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), fragment);
@@ -334,21 +331,8 @@ void slideClassifier(Mat& target, int numIntervals,bool flag) {
 		totalInstances += counters[i];
 	}
 	for (int i = 0; i < counters.size(); i++) {
-		cout << "We found a " << float(counters[i] / totalInstances)*100 << " % of " << labels[i] << endl;
+		//cout << "We found a " << float(counters[i] / (numIntervals*numIntervals))*100 << " % of " << labels[i] << endl;
 	}
-	/*cout << "We found " << counters[0] << " instances of bread in this image" << endl;
-	cout << "We found " << counters[1] << " instances of Pasta pesto in this image" << endl;
-	cout << "We found " << counters[2] << " instances of beans in this image" << endl;
-	cout << "We found " << counters[3] << " instances of pork in this image" << endl;
-	cout << "We found " << counters[4] << " instances of salad in this image" << endl;
-	cout << "We found " << counters[5] << " instances of fish in this image" << endl;
-	cout << "We found " << counters[6] << " instances of potatoes in this image" << endl;
-	cout << "We found " << counters[7] << " instances of pasta tomato in this image" << endl;
-	cout << "We found " << counters[8] << " instances of rabbit in this image" << endl;
-	cout << "We found " << counters[9] << " instances of rice in this image" << endl;
-	cout << "We found " << counters[10] << " instances of Pasta Meat in this image" << endl;
-	cout << "We found " << counters[11] << " instances of Pasta Clums in this image" << endl;
-	cout << "We found " << counters[12] << " instances of SeaFood salad in this image" << endl;*/
 }
 
 cv::Mat lookupTable(int levels) {
@@ -579,3 +563,59 @@ cv::Mat colorReduce(const cv::Mat& image, int levels) {
 //	scores[index] += numMatches;//trgKeyPoints.size();
 //	//cout << numMatches << endl;
 //}
+
+
+//Old conditions for the classifier
+
+//if (averages[2] >= 186 && averages[2] <= 234			//Bread check
+//	&& averages[0] >= 71 && averages[0] <= 199
+//	&& averages[1] >= 39 && averages[1] <= 226)
+//	counters[0]++;
+//if (averages[2] >= 62 && averages[2] <= 168				//Pesto check
+//	&& averages[0] >= 13 && averages[0] <= 96
+//	&& averages[1] >= 31 && averages[1] <= 215)
+//	counters[1]++;
+//if (averages[2] >= 116 && averages[2] <= 180				//Beans check
+//	&& averages[0] >= 55 && averages[0] <= 148
+//	&& averages[1] >= 18 && averages[1] <= 126)
+//	counters[2]++;
+//if (averages[2] >= 71 && averages[2] <= 153				//Pork check
+//	&& averages[0] >= 25 && averages[0] <= 122
+//	&& averages[1] >= 50 && averages[1] <= 161)
+//	counters[3]++;
+//if (averages[2] >= 73 && averages[2] <= 235				//Salad check
+//	&& averages[0] >= 6 && averages[0] <= 77
+//	&& averages[1] >= 13 && averages[1] <= 169)
+//	counters[4]++;
+//if (averages[2] >= 147 && averages[2] <= 243			//fishC check
+//	&& averages[0] >= 45 && averages[0] <= 200
+//	&& averages[1] >= 62 && averages[1] <= 243)
+//	counters[5]++;
+//if (averages[2] >= 162 && averages[2] <= 236			//Potatoes check
+//	&& averages[0] >= 26 && averages[0] <= 147
+//	&& averages[1] >= 68 && averages[1] <= 217)
+//	counters[6]++;
+//if (averages[2] >= 89 && averages[2] <= 221				//Tomato check
+//	&& averages[0] >= 1 && averages[0] <= 90
+//	&& averages[1] >= 3 && averages[1] <= 195)
+//	counters[7]++;
+//if (averages[2] >= 89 && averages[2] <= 221				//Rabbit check
+//	&& averages[0] >= 53 && averages[0] <= 191
+//	&& averages[1] >= 14 && averages[1] <= 191)
+//	counters[8]++;
+//if (averages[2] >= 91 && averages[2] <= 196				//Rice check
+//	&& averages[0] >= 35 && averages[0] <= 130
+//	&& averages[1] >= 55 && averages[1] <= 162)
+//	counters[9]++;
+//if (averages[2] >= 53 && averages[2] <= 204				//PastaM check
+//	&& averages[0] >= 5 && averages[0] <= 175
+//	&& averages[1] >= 25 && averages[1] <= 190)
+//	counters[10]++;
+//if (averages[2] >= 78 && averages[2] <= 227				//PastaC check
+//	&& averages[0] >= 4 && averages[0] <= 72
+//	&& averages[1] >= 33 && averages[1] <= 152)
+//	counters[11]++;
+//if (averages[2] >= 72 && averages[2] <= 182				//SeaSalad check
+//	&& averages[0] >= 10 && averages[0] <= 243
+//	&& averages[1] >= 19 && averages[1] <= 223)
+//	counters[12]++;
