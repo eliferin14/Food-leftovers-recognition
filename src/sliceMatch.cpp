@@ -2,6 +2,7 @@
 #include<cmath>
 #include <opencv2/core/types.hpp>
 #include"Detector.hpp"
+#include "opencv2/opencv.hpp"
 using namespace std;
 using namespace cv;
 
@@ -228,6 +229,224 @@ float meanCalculator(Mat target,int kSize,Point2f center) {
 }
 
 
+void slideClassifier(Mat& target, int numIntervals,bool flag) {
+	int sizeIntervalX = int(target.size().width / numIntervals);
+	int sizeIntervalY = int(target.size().height / numIntervals);
+	/*float counter = 0;
+	float counter1 = 0;*/
+	vector<float> numCl(13);//Bread,Pasta Pesto,Beans,Pork Cutlet
+	const int offset = 0;
+	vector<float> averages(3);
+	vector<float> counters(13);//Bread,Pasta Pesto,Beans,Pork Cutlet
+	vector<String> labels = { "Bread","Pasta Pesto","Beans","Pork Cutlet","Salad","Fish cutlet","potatoes",
+	"Pasta tomato","Rabbit","Rice","Pasta Meat","Pasta Clums","Seafood salad"};
+	for (int numWindowX = 0; numWindowX < numIntervals; numWindowX++) {
+		for (int numWindowY = 0; numWindowY < numIntervals; numWindowY++) {
+			for (int i = int((target.rows * numWindowX) / numIntervals); i < int((target.rows * (numWindowX + 1)) / numIntervals); i++) {
+				for (int j = int((target.cols * numWindowY) / numIntervals); j <int((target.cols * (numWindowY + 1)) / numIntervals); j++) {
+					averages[0] += target.at<Vec3b>(i, j)[0];
+					averages[1] += target.at<Vec3b>(i, j)[1];
+					averages[2] += target.at<Vec3b>(i, j)[2];
+				}
+			}
+			averages[0] = averages[0] / (sizeIntervalX * sizeIntervalY);
+			averages[1] /= (sizeIntervalX * sizeIntervalY);
+			averages[2] /= (sizeIntervalX * sizeIntervalY);
+			//Bread 0,Pasta Pesto 1,Beans 2 ,Pork Cutlet 3,Salad 4 ,fish chutlet 5, potatoes 6 ,pasta tomato 7
+			//Rabbit 8, Rice 9, Pasta Meat 10 ,Pasta Clums 11 , SeaFood salad 12
+			if (averages[2] >= 186 && averages[2] <= 234			//Bread check
+				&& averages[0] >= 71 && averages[0] <= 199
+				&& averages[1] >= 39 && averages[1] <= 226)
+				counters[0]++;
+			if (averages[2] >= 62 && averages[2] <= 168				//Pesto check
+				&& averages[0] >= 13 && averages[0] <= 96
+				&& averages[1] >= 31 && averages[1] <= 215)
+				counters[1]++;
+			if(averages[2] >= 116 && averages[2] <= 180				//Beans check
+				&& averages[0] >= 55 && averages[0] <= 148
+				&& averages[1] >= 18 && averages[1] <= 126)
+				counters[2]++;
+			if(averages[2] >= 71 && averages[2] <= 153				//Pork check
+				&& averages[0] >= 25 && averages[0] <= 122
+				&& averages[1] >= 50 && averages[1] <= 161)
+				counters[3]++;
+			if (averages[2] >= 73 && averages[2] <= 235				//Salad check
+				&& averages[0] >= 6 && averages[0] <= 77
+				&& averages[1] >= 13 && averages[1] <= 169)
+				counters[4]++;
+			if (averages[2] >= 147 && averages[2] <= 243			//fishC check
+				&& averages[0] >= 45 && averages[0] <= 200
+				&& averages[1] >= 62 && averages[1] <= 243)
+				counters[5]++;
+			if (averages[2] >= 162 && averages[2] <= 236			//Potatoes check
+				&& averages[0] >= 26 && averages[0] <= 147
+				&& averages[1] >= 68 && averages[1] <= 217)
+				counters[6]++;
+			if (averages[2] >= 89 && averages[2] <= 221				//Tomato check
+				&& averages[0] >= 1 && averages[0] <= 90
+				&& averages[1] >= 3 && averages[1] <= 195)
+				counters[7]++;
+			if (averages[2] >= 89 && averages[2] <= 221				//Rabbit check
+				&& averages[0] >= 53 && averages[0] <= 191
+				&& averages[1] >= 14 && averages[1] <= 191)
+				counters[8]++;
+			if (averages[2] >= 91 && averages[2] <= 196				//Rice check
+				&& averages[0] >= 35 && averages[0] <= 130
+				&& averages[1] >= 55 && averages[1] <= 162)
+				counters[9]++;
+			if (averages[2] >= 53 && averages[2] <= 204				//PastaM check
+				&& averages[0] >= 5 && averages[0] <= 175
+				&& averages[1] >= 25 && averages[1] <= 190)
+				counters[10]++;
+			if (averages[2] >= 78 && averages[2] <= 227				//PastaC check
+				&& averages[0] >= 4 && averages[0] <= 72
+				&& averages[1] >= 33 && averages[1] <= 152)
+				counters[11]++;
+			if (averages[2] >= 72 && averages[2] <= 182				//SeaSalad check
+				&& averages[0] >= 10 && averages[0] <= 243
+				&& averages[1] >= 19 && averages[1] <= 223)
+				counters[12]++;
+			int temp_x1 = sizeIntervalX * (numWindowX);
+			int temp_y1 = sizeIntervalY * (numWindowY);
+			int temp_x2 = sizeIntervalX;
+			int temp_y2 = sizeIntervalY;
+			Mat fragment;
+			fragment = target(Rect(temp_x1, temp_y1, temp_x2, temp_y2));
+			//std::cout << "Blue average: " << averages[0] << endl;
+			//std::cout << "Green average: " << averages[1] << endl;
+			std::cout << "Red average: " << averages[2] << endl;
+			if (flag) {
+				namedWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), WINDOW_NORMAL);
+				imshow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), fragment);
+				waitKey(0);
+				destroyWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1));
+			}
+			averages[0] = 0;
+			averages[1] = 0;
+			averages[2] = 0;
+		}
+	}
+	float totalInstances = 0;
+	for (int i = 0; i < counters.size(); i++) {
+		totalInstances += counters[i];
+	}
+	for (int i = 0; i < counters.size(); i++) {
+		//cout << "We found a " << float(counters[i] / (numIntervals*numIntervals))*100 << " % of " << labels[i] << endl;
+	}
+}
+
+cv::Mat lookupTable(int levels) {
+	int factor = 256 / levels;
+	cv::Mat table(1, 256, CV_8U);
+	uchar* p = table.data;
+
+	for (int i = 0; i < 128; ++i) {
+		p[i] = factor * (i / factor);
+	}
+
+	for (int i = 128; i < 256; ++i) {
+		p[i] = factor * (1 + (i / factor)) - 1;
+	}
+
+	return table;
+}
+
+cv::Mat colorReduce(const cv::Mat& image, int levels) {
+	cv::Mat table = lookupTable(levels);
+
+	std::vector<cv::Mat> c;
+	cv::split(image, c);
+	for (std::vector<cv::Mat>::iterator i = c.begin(), n = c.end(); i != n; ++i) {
+		cv::Mat& channel = *i;
+		cv::LUT(channel.clone(), table, channel);
+	}
+
+	cv::Mat reduced;
+	cv::merge(c, reduced);
+	return reduced;
+}
+
+//void slideCounter(Mat target, int numIntervals) {
+//	int firstX = 0;
+//	int firstY = 0;
+//	int lastX = 0;
+//	int lastY = 0;
+//	int firstX2 = 0;
+//	int firstY2 = 0;
+//	int lastX2 = 0;
+//	int lastY2 = 0;
+//	bool firstFound = false;
+//	bool firstFound2 = false;
+//	int sizeIntervalX = target.size().width / numIntervals;
+//	int sizeIntervalY = target.size().height / numIntervals;
+//	for (int numWindowX = 0; numWindowX < numIntervals - 1; numWindowX++) {
+//		for (int numWindowY = 0; numWindowY < numIntervals - 1; numWindowY++) {
+//
+//			int temp_x1 = sizeIntervalX * (numWindowX);
+//			int temp_y1 = sizeIntervalY * (numWindowY);
+//			int temp_x2 = sizeIntervalX;
+//			int temp_y2 = sizeIntervalY;
+//			Mat fragment;
+//			fragment = target(Rect(temp_x1, temp_y1, temp_x2, temp_y2));
+//			/*namedWindow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), WINDOW_NORMAL);
+//			imshow(to_string(numWindowX + 1) + " " + to_string(numWindowY + 1), fragment);*/
+//			for (int i = temp_x1; i < temp_x2 * (numWindowX + 1); i++) {
+//				for (int j = temp_y1; j < temp_y2 * ((numWindowY + 1)); j++) {
+//					if ((40-offset <= target.at<Vec3b>(i, j)[0] && target.at<Vec3b>(i, j)[0] <= 150+offset &&
+//						59 - offset <= target.at<Vec3b>(i, j)[1] && target.at<Vec3b>(i, j)[1] <= 160+offset &&
+//						86 - offset <= target.at<Vec3b>(i, j)[2] && target.at<Vec3b>(i, j)[2] <= 176+ offset)) {
+//							numCl[0]++;
+//					}
+//					if ((51 - offset <= target.at<Vec3b>(i, j)[0] && target.at<Vec3b>(i, j)[0] <= 95 + offset &&
+//						63 - offset <= target.at<Vec3b>(i, j)[1] && target.at<Vec3b>(i, j)[1] <= 106 + offset &&
+//						87 - offset <= target.at<Vec3b>(i, j)[2] && target.at<Vec3b>(i, j)[2] <= 133 + offset)) {
+//						numCl[1]++;
+//					}
+//				}
+//			}
+//			cout << numCl[1] << endl;
+//			cout << "this quadrant is " << numCl[1] / (sizeIntervalX * sizeIntervalY) << " % " << "beans" << endl;
+//			if (numCl[0] / (sizeIntervalX * sizeIntervalY) > 0.5) {
+//				if (!firstFound) {
+//					firstFound = true;
+//					firstX = numWindowX;
+//					firstY = numWindowY;
+//				}
+//				/*namedWindow(to_string(numCl[0] / (sizeIntervalX * sizeIntervalY)) + "%", WINDOW_NORMAL);
+//				imshow(to_string(numCl[0] / (sizeIntervalX * sizeIntervalY)) + "%", fragment);*/
+//				lastX = numWindowX;
+//				lastY = numWindowY;
+//			}
+//			if (numCl[1] / (sizeIntervalX * sizeIntervalY) > 0.5) {
+//				if (!firstFound2) {
+//					firstFound2 = true;
+//					firstX2 = numWindowX;
+//					firstY2 = numWindowY;
+//				}
+//				namedWindow(to_string(numCl[1] / (sizeIntervalX * sizeIntervalY)) + "%", WINDOW_NORMAL);
+//				imshow(to_string(numCl[1] / (sizeIntervalX * sizeIntervalY)) + "%", fragment);
+//				lastX2 = numWindowX;
+//				lastY2 = numWindowY;
+//			}
+//			//waitKey(0);
+//			numCl[0] = 0;
+//			numCl[1] = 0;
+//		}
+//		/*waitKey(0);*/
+//	}
+//	Point2f ne = Point2f(firstX * sizeIntervalX, firstY * sizeIntervalY);
+//	Point2f so = Point2f((lastX+1) * sizeIntervalX, (lastY+1) * sizeIntervalY);
+//	rectangle(target, ne, so, Scalar(255, 100, 100), 3);
+//	namedWindow("new BB", WINDOW_NORMAL);
+//	imshow("new BB", target);
+//	Point2f ne2 = Point2f(firstX2 * sizeIntervalX, firstY2 * sizeIntervalY);
+//	Point2f so2 = Point2f((lastX2+1) * sizeIntervalX, (lastY2+1) * sizeIntervalY);
+//	rectangle(target, ne2, so2, Scalar(100, 100, 100), 3);
+//	namedWindow("new BB2", WINDOW_NORMAL);
+//	imshow("new BB2", target);
+//	/*destroyAllWindows();*/
+//}
+
 //const int dataSize = 5;
 //vector<Mat> pasta;
 //vector<Mat> meat;
@@ -344,3 +563,59 @@ float meanCalculator(Mat target,int kSize,Point2f center) {
 //	scores[index] += numMatches;//trgKeyPoints.size();
 //	//cout << numMatches << endl;
 //}
+
+
+//Old conditions for the classifier
+
+//if (averages[2] >= 186 && averages[2] <= 234			//Bread check
+//	&& averages[0] >= 71 && averages[0] <= 199
+//	&& averages[1] >= 39 && averages[1] <= 226)
+//	counters[0]++;
+//if (averages[2] >= 62 && averages[2] <= 168				//Pesto check
+//	&& averages[0] >= 13 && averages[0] <= 96
+//	&& averages[1] >= 31 && averages[1] <= 215)
+//	counters[1]++;
+//if (averages[2] >= 116 && averages[2] <= 180				//Beans check
+//	&& averages[0] >= 55 && averages[0] <= 148
+//	&& averages[1] >= 18 && averages[1] <= 126)
+//	counters[2]++;
+//if (averages[2] >= 71 && averages[2] <= 153				//Pork check
+//	&& averages[0] >= 25 && averages[0] <= 122
+//	&& averages[1] >= 50 && averages[1] <= 161)
+//	counters[3]++;
+//if (averages[2] >= 73 && averages[2] <= 235				//Salad check
+//	&& averages[0] >= 6 && averages[0] <= 77
+//	&& averages[1] >= 13 && averages[1] <= 169)
+//	counters[4]++;
+//if (averages[2] >= 147 && averages[2] <= 243			//fishC check
+//	&& averages[0] >= 45 && averages[0] <= 200
+//	&& averages[1] >= 62 && averages[1] <= 243)
+//	counters[5]++;
+//if (averages[2] >= 162 && averages[2] <= 236			//Potatoes check
+//	&& averages[0] >= 26 && averages[0] <= 147
+//	&& averages[1] >= 68 && averages[1] <= 217)
+//	counters[6]++;
+//if (averages[2] >= 89 && averages[2] <= 221				//Tomato check
+//	&& averages[0] >= 1 && averages[0] <= 90
+//	&& averages[1] >= 3 && averages[1] <= 195)
+//	counters[7]++;
+//if (averages[2] >= 89 && averages[2] <= 221				//Rabbit check
+//	&& averages[0] >= 53 && averages[0] <= 191
+//	&& averages[1] >= 14 && averages[1] <= 191)
+//	counters[8]++;
+//if (averages[2] >= 91 && averages[2] <= 196				//Rice check
+//	&& averages[0] >= 35 && averages[0] <= 130
+//	&& averages[1] >= 55 && averages[1] <= 162)
+//	counters[9]++;
+//if (averages[2] >= 53 && averages[2] <= 204				//PastaM check
+//	&& averages[0] >= 5 && averages[0] <= 175
+//	&& averages[1] >= 25 && averages[1] <= 190)
+//	counters[10]++;
+//if (averages[2] >= 78 && averages[2] <= 227				//PastaC check
+//	&& averages[0] >= 4 && averages[0] <= 72
+//	&& averages[1] >= 33 && averages[1] <= 152)
+//	counters[11]++;
+//if (averages[2] >= 72 && averages[2] <= 182				//SeaSalad check
+//	&& averages[0] >= 10 && averages[0] <= 243
+//	&& averages[1] >= 19 && averages[1] <= 223)
+//	counters[12]++;

@@ -14,6 +14,12 @@ void slicedFeatureViewer(vector<Mat> slicedImages, vector<vector<KeyPoint>>slice
 void classifier(Mat target,Point2f center,String& composition);
 float meanCalculator(Mat target,int kSize,Point2f center);
 
+void slideClassifier(Mat& target,int windowSize,bool flag);
+Mat lookupTable(int levels);
+Mat colorReduce(const cv::Mat& image, int levels);
+//void slideCounter(Mat target, int windowSize);
+
+
 //void matcher(Mat target, vector<int>& probability);
 //void matcherInitializer();
 //void classifier(Mat target,vector<float>& personalScores);
