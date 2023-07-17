@@ -1,6 +1,7 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "Detector.hpp"
+#include "utils.hpp"
 
 using namespace cv;
 using namespace std;
@@ -11,10 +12,15 @@ using namespace std;
 
 int main(int argc, char** argv) {
     
-    Mat image = imread("../Food_leftover_dataset/tray4/food_image.jpg");
-    
-    vector<KeyPoint> keypoints;
-    Mat descriptors;
-    featureDetector(image, keypoints, descriptors);
+    Mat image = imread(argv[1]);
+    Mat mask, masked;
+
+    double otsuThreshold = removeLowSaturationHSV_otsu(image, mask);
+    removeLowSaturationHSV(image, mask, otsuThreshold/3);
+
+    bitwise_and(image, image, masked, mask);
+
+    showImage("Before", image);
+    showImage("After", masked);
 
 }
