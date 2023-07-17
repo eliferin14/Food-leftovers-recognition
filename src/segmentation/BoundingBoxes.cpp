@@ -19,6 +19,17 @@ void getBoundingBoxes(std::vector<std::vector<cv::Point2f>>& clusters, std::vect
             if ( pY > maxY ) maxY = pY;
         }
 
+        // Rectangle width and height
+        double width = maxX - minX;
+        double height = maxY - minY;
+
+        // Add a bit of extra margin
+        double percentage = 0.05;
+        minX -= percentage * width;
+        maxX += percentage * width;
+        minY -= percentage * height;
+        maxY += percentage * height;
+
         // Define the two extremes of the bounding box
         cv::Point2f upperLeftCorner(minX, minY);
         cv::Point2f lowerRightCorner(maxX, maxY);

@@ -34,6 +34,7 @@ void removeLowSaturation(cv::Mat& src, cv::Mat& dst, double threshold) {
 
 	// Remove all the pixel with saturation lower than the threshold and generate the mask
 	cv::inRange(srcS, threshold, 255, mask);
+    //cv::GaussianBlur(srcS, srcS, cv::Size(5,5), 0); cv::threshold(srcS, mask, 0, 255, cv::THRESH_OTSU);
 
     // Apply the mask to the source
     cv::bitwise_and(src, src, dst, mask);

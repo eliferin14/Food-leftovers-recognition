@@ -21,11 +21,22 @@ void drawPath(cv::Mat& img, std::vector<cv::Point2f>& points); // Draw the paths
 // Clustering
 void assignLabels(std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& paths, std::vector<int>& labels, std::vector<std::vector<cv::Point2f>>& clusters);
 void removeLowCountClusters(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& centroids, int threshold);
+
+// Gaussian pruning
 void computeMean(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& means);
 double computeCovarianceScalar(std::vector<double> valuesA, std::vector<double> valuesB, double meanA, double meanB);
 void computeVarianceMatrices(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& means, std::vector<cv::Mat>& covMatrices);
 cv::RotatedRect getErrorEllipse(double chisquare_val, cv::Point2f mean, cv::Mat covmat);
 void gaussianPruning(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& means, std::vector<cv::Mat>& covMatrices, double varianceThreshold, std::vector<cv::RotatedRect>& ellipses);
 
+// Gaussian clustering
+double gaussianLikelihood(cv::Point2f p, cv::Point2f mean, cv::Mat covmat);
+void gaussianClustering(std::vector<cv::KeyPoint>& keypoints, std::vector<cv::Point2f>& means, std::vector<cv::Mat>& covMatrices, std::vector<std::vector<cv::Point2f>>& clusters);
+
+// Distance pruning
+void distancePruning(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& centroids, double distanceThreshold);
+
+// Kmeans
+void kmeansClustering(std::vector<cv::KeyPoint>& keypoints, std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& clusters);
 
 #endif

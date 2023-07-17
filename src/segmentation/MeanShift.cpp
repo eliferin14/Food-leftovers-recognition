@@ -260,15 +260,15 @@ bool isPointInsideEllipse(cv::Point2f point, cv::RotatedRect ellipse) {
     cv::Point2f center = ellipse.center;
     double axisX = ellipse.size.width / 2;
     double axisY = ellipse.size.height / 2;
-    double angle = (180 - ellipse.angle) * CV_PI / 180;
+    double angle = ( ellipse.angle) * CV_PI / 180;
 
     double deltaX = point.x - center.x;
     double deltaY = point.y - center.y;
 
     double temp1 = pow( (cos(angle)*deltaX + sin(angle)*deltaY), 2 ) / pow(axisX, 2);
-    double temp2 = pow( (sin(angle)*deltaX - cos(angle*deltaY)), 2 ) / pow(axisY, 2);
+    double temp2 = pow( (sin(angle)*deltaX - cos(angle)*deltaY), 2 ) / pow(axisY, 2);
 
-    printf("Temp: %f", temp1+temp2);
+    //printf("Temp: %f", temp1+temp2);
     
     return (temp1 + temp2) < 1;
 }
@@ -280,10 +280,83 @@ void gaussianPruning(std::vector<std::vector<cv::Point2f>>& clusters, std::vecto
 
         for (int j=clusters[i].size()-1; j>=0; j--) {
             if ( !isPointInsideEllipse( clusters[i][j], ellipses[i]) ) {
-                printf(" -> deleted!");
+                //printf(" -> deleted!");
                 clusters[i].erase(clusters[i].begin()+j);
             }
-            printf("\n");
+            //printf("\n");
         }
+    }
+}
+
+void distancePruning(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& centroids, double distanceThreshold) {
+    for (int i=0; i<clusters.size(); i++) {
+
+        // Check if each point is within a certain distance. If not, discard it
+        for (int j=clusters[i].size(); j>=0; j--) {
+
+            if ( pointsDistance(clusters[i][j], centroids[i]) > distanceThreshold ) {
+                clusters[i].erase(clusters[i].begin() + j);
+            } 
+        }
+    }
+}
+
+double gaussianLikelihood(cv::Point2f p, cv::Point2f mean, cv::Mat covmat) {
+    double det = cv::determinant(covmat);
+    cv::Mat covInverse = covmat.inv();
+
+    cv::Mat difference(cv::Size(1,2), CV_64FC1);
+    difference.at<double>(0,0) = p.x - mean.x;
+    difference.at<double>(1,0) = p.y - mean.y;
+
+    cv::Mat temp = difference.t()*covInverse*difference;
+
+    double likelihood = 1 / (2*CV_PI*sqrt(det)) * exp( -1/2 * temp.at<double>(0,0) );
+
+    return likelihood;
+}
+
+void gaussianClustering(std::vector<cv::KeyPoint>& keypoints, std::vector<cv::Point2f>& means, std::vector<cv::Mat>& covMatrices, std::vector<std::vector<cv::Point2f>>& clusters) {
+    
+    clusters = std::vector<std::vector<cv::Point2f>>(means.size());
+
+    // For each keypoint find the maximum likelihood and cluster it accordingly
+    for (int i=0; i<keypoints.size(); i++) {
+        double maxLikelihood = -1;
+        int maxCluster = -1;
+
+        for (int j=0; j<means.size(); j++) {
+            double likelihood = gaussianLikelihood( keypoints[i].pt, means[j], covMatrices[j]);
+            std::cout << likelihood << " ";
+
+            if (likelihood >= maxLikelihood) {
+                maxLikelihood = likelihood;
+                maxCluster = j;
+            }
+        }
+
+        std::cout << maxCluster << std::endl;
+        clusters[maxCluster].push_back(keypoints[i].pt);
+    }
+}
+
+void kmeansClustering(std::vector<cv::KeyPoint>& keypoints, std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& clusters) {
+
+    clusters = std::vector<std::vector<cv::Point2f>>(centroids.size());
+
+    for (int i=0; i<keypoints.size(); i++) {
+
+        double minDistance = 100000;
+        double minIndex = -1;
+
+        for (int j=0; j<centroids.size(); j++) {
+            double distance = pointsDistance( keypoints[i].pt, centroids[j] );
+            if ( distance < minDistance ) {
+                minDistance = distance;
+                minIndex = j;
+            }
+        }
+
+        clusters[minIndex]. push_back(keypoints[i].pt);
     }
 }
