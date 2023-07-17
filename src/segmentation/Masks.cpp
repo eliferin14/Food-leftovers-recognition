@@ -83,7 +83,7 @@ void masksPostprocess(std::vector<cv::Mat>& masks) {
         cv::inRange(maskGray, 1, 255, maskGray);
 
         // Closing operation
-        morphologyEx(maskGray, maskGray, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(50,50)));
+        morphologyEx(maskGray, maskGray, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(40,40)));
 
         // Save the mask
         masks[i] = maskGray;
