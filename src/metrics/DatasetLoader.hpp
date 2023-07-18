@@ -32,7 +32,7 @@ public:
 
     TrayData(string path);
     void loadLabels();
-    void loadBoundingBoxes();
+    void loadBoundingBoxes(); // CHECK SEGMENTATION FAULT SUL VECTOR CREATO DENTRO
     void loadMasks();
     friend ostream& operator<<(ostream& os, const TrayData& tray);
 };
@@ -40,5 +40,16 @@ public:
 // Helper functions
 void loadLabels_singleTray(string filename, vector<int>& labels);
 void loadLabels(string foldername, vector<vector<int>>& labels);
+
+// Load our bounding boxes
+// Needs to be different because we had problems with classification
+void loadOurBoundingBoxes_singleFile(std::string filepath, std::vector<cv::Rect>& boundingBoxes);
+void loadOurBoundingBoxes_singleTray(std::string trayPath, std::vector<std::vector<cv::Rect>>& trayBoundingBoxes);
+void loadOurBoundingBoxes(std::string ourDatasetPath, std::vector<std::vector<std::vector<cv::Rect>>>& boundingBoxes);
+
+// Load dataset's bounding boxes
+void loadTrueBoundingBoxes_singleFile(std::string filepath, std::vector<cv::Rect>& boundingBoxes);
+void loadTrueBoundingBoxes_singleTray(std::string trayPath, std::vector<std::vector<cv::Rect>>& trayBoundingBoxes);
+void loadTrueBoundingBoxes(std::string ourDatasetPath, std::vector<std::vector<std::vector<cv::Rect>>>& boundingBoxes);
 
 #endif

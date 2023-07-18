@@ -8,9 +8,17 @@ find_package(OpenCV REQUIRED)
 
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
-#Segmentation
-add_executable(segmentation src/segmentation/segmentation.cpp src/segmentation/MeanShift.cpp src/utils.cpp src/segmentation/BoundingBoxes.cpp src/segmentation/Masks.cpp)
+# Segmentation
+add_executable(segmentation src/segmentation/segmentation.cpp src/segmentation/MeanShift.cpp src/utils.cpp src/segmentation/BoundingBoxes.cpp src/segmentation/Masks.cpp src/segmentation/MaskSplitter.cpp)
 target_link_libraries(segmentation ${OpenCV_LIBS})
+
+# Metrics
+add_executable(metrics src/metrics/metrics.cpp src/metrics/DatasetLoader.cpp src/metrics/MeanAveragePrecision.cpp)
+target_link_libraries(metrics ${OpenCV_LIBS})
+
+# Gianni-Crisci
+add_executable(gianniCrisci src/gianniCrisci.cpp src/Detector.cpp src/BoundBox.cpp src/Crisci.cpp src/Seg.cpp)
+target_link_libraries(gianniCrisci ${OpenCV_LIBS})
 
 # Create executables
 # Multiple executables can be defined, one for each task
