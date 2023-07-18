@@ -52,4 +52,12 @@ void loadTrueBoundingBoxes_singleFile(std::string filepath, std::vector<cv::Rect
 void loadTrueBoundingBoxes_singleTray(std::string trayPath, std::vector<std::vector<cv::Rect>>& trayBoundingBoxes);
 void loadTrueBoundingBoxes(std::string ourDatasetPath, std::vector<std::vector<std::vector<cv::Rect>>>& boundingBoxes);
 
+// Load our masks
+void loadOurMasks_singleTray(std::string trayPath, std::vector<cv::Mat>& trayMasks);
+void loadOurMasks(std::string ourDatasetPath, std::vector<std::vector<cv::Mat>>& masks);
+
+// Load the true masks
+void loadTrueMasks_singleTray(std::string trayPath, std::vector<cv::Mat>& trayMasks);
+void loadTrueMasks(std::string trueDatasetPath, std::vector<std::vector<cv::Mat>>& masks);
+
 #endif

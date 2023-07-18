@@ -303,3 +303,35 @@ void loadTrueBoundingBoxes(std::string datasetPath, std::vector<std::vector<std:
         //std::cout << "Tray " << tray << ": " << boundingBoxes[tray-1].size() << std::endl;
     }
 }
+
+void loadOurMasks_singleTray(std::string trayPath, std::vector<cv::Mat>& trayMasks) {
+    std::vector<std::string> filenames = {"food_image", "leftover1", "leftover2", "leftover3"};
+
+    for (int i=0; i<filenames.size(); i++) {
+        std::string filepath = trayPath + filenames[i] + "_masksUnion.jpg";
+        trayMasks[i] = cv::imread(filepath, IMREAD_GRAYSCALE);
+    }
+}
+
+void loadOurMasks(std::string ourDatasetPath, std::vector<std::vector<cv::Mat>>& masks) {
+    for (int tray=1; tray<=8; tray++) {
+        std::string trayPath = ourDatasetPath + "/tray" + to_string(tray) + "/";
+        loadOurMasks_singleTray(trayPath, masks[tray-1]);
+    }
+}
+
+void loadTrueMasks_singleTray(std::string trayPath, std::vector<cv::Mat>& trayMasks) {
+    std::vector<std::string> filenames = {"food_image_mask", "leftover1", "leftover2", "leftover3"};
+
+    for (int i=0; i<filenames.size(); i++) {
+        std::string filepath = trayPath + "masks/" + filenames[i] + ".png";
+        trayMasks[i] = cv::imread(filepath, IMREAD_GRAYSCALE);
+    }
+}
+
+void loadTrueMasks(std::string trueDatasetPath, std::vector<std::vector<cv::Mat>>& masks) {
+    for (int tray=1; tray<=8; tray++) {
+        std::string trayPath = trueDatasetPath + "/tray" + to_string(tray) + "/";
+        loadTrueMasks_singleTray(trayPath, masks[tray-1]);
+    }
+}
