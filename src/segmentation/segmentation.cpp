@@ -2,6 +2,8 @@
 #include "BoundingBoxes.hpp"
 #include "Masks.hpp"
 #include "../utils.hpp"
+#include "MaskSplitter.hpp"
+#include <opencv2/core/utils/filesystem.hpp>
 
 using namespace std;
 using namespace cv;
@@ -165,6 +167,12 @@ void segmentImage(string filepath, string filename, string outputPath) {
             //showImage("Maks", masks[i]);
         }
 
+        for (int i=0; i<masks.size(); i++) {
+            Mat maskBGR;
+            bitwise_and(image, image, maskBGR, masks[i]);
+            //showImage("Final mask BGR", maskBGR);
+        }
+
     // Redefine the bounding boxes to be exactly as large as the masks
     refineBoundingBoxes(masks, boundingBoxes);
 
@@ -186,39 +194,58 @@ void segmentImage(string filepath, string filename, string outputPath) {
     }
     //showImage("Contours", contours_image);
     imwrite(outputPath+filename+"_contours.jpg", contours_image);
+
+    // Save the data
+    Mat masksUninon;
+    uniteMasks(masks, masksUninon);
+    //showImage("Masks union", masksUninon);
+    string masksPath = outputPath + "masks/";
+    imwrite(masksPath+filename+"_masksUnion.jpg", masksUninon);
+
+    string bbPath = outputPath + "bounding_boxes/";
+    saveBoundingBoxes(boundingBoxes, bbPath+filename+"_bounding_boxes.txt");
     
 }
 
 void iterateDataset(string dataset_path, string output_dataset_path) {// Filenames of the images of each tray
     vector<string> filenames = {"food_image", "leftover1", "leftover2", "leftover3"};
 
+    // Create the output dataset directory
+    cv::utils::fs::createDirectory(output_dataset_path);
+
     // Iterate on the entire dataset
     for (int tray=1; tray<=8; tray++) {
 
         string tray_path = dataset_path + "/tray" + to_string(tray);
-        string output_path = output_dataset_path + "/tray" + to_string(tray) + "/";
+        string output_tray_path = output_dataset_path + "/tray" + to_string(tray) + "/";
+
+        // Create folders
+        cv::utils::fs::createDirectory(output_tray_path);
+        cv::utils::fs::createDirectory(output_tray_path + "bounding_boxes");
+        cv::utils::fs::createDirectory(output_tray_path + "masks");
+
 
         for (int i=0; i<filenames.size(); i++) {
             string filepath = tray_path + "/" + filenames[i] + ".jpg";
 
             cout << "======================================" << endl;
             cout << filepath << endl;
-            cout << output_path << endl;
+            cout << output_tray_path << endl;
 
-            segmentImage(filepath, filenames[i], output_path);
+            segmentImage(filepath, filenames[i], output_tray_path);
         }
     }
 }
 
 int main(int argc, char** argv) {
 
-    // The dataset path is passed as parameter
-    string dataset_path = argv[1];
-    string output_dataset_path = argv[2];
+    // Datasets relative paths
+    string dataset_path = "../Food_leftover_dataset"; 
+    string output_dataset_path = "../Our_dataset";   
+
+    //segmentImage(argv[1], "food_image", "../Our_dataset/tray6/");
 
     iterateDataset(dataset_path, output_dataset_path);
-
-    //segmentImage(argv[1], "pappa", "culo");
 
     return 0;
 }
