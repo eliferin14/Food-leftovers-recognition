@@ -121,6 +121,9 @@ void slideWind(Mat src, Mat& dst, int kerSize){
 
 }
 
+
+
+//Function to apply cv::grabCut function. Implementation of GrabAlgorithm
 void grabAlg(Mat src,Mat& dst, vector<Point2f> bb){
     dst=src.clone();
     Mat mask;
@@ -149,6 +152,7 @@ void grabAlg(Mat src,Mat& dst, vector<Point2f> bb){
     //waitKey(0);
 }
 
+//Colored defined mask given a black and white mask.
 void maskSovraposition(Mat src,Mat mask,Mat& dst){
     dst=src.clone();
     for(int i=0;i<src.rows;i++){
@@ -157,6 +161,54 @@ void maskSovraposition(Mat src,Mat mask,Mat& dst){
                 dst.at<Vec3b>(i,j)[0]=0;
                 dst.at<Vec3b>(i,j)[1]=0;
                 dst.at<Vec3b>(i,j)[2]=0;
+            }
+        }
+    }
+
+}
+
+void coloredMask(Mat cleanImg, Mat& dst, vector<Mat> mask, vector<vector<Point2f>> extremes){
+    dst=Mat(cleanImg.rows, cleanImg.cols, CV_8UC1, Scalar(0));
+    //coloring only masks
+    vector<int> colors={40, 80, 120 , 160, 200, 240, 255};
+    for(int i=0;i<extremes.size();i++){
+        for(int x=extremes[i][0].x;x<=extremes[i][1].x;x++){
+            for(int y=extremes[i][0].y;y<=extremes[i][1].y;y++){
+                if(mask[i].at<uchar>(y,x)!=0){//Before it was mask
+                    dst.at<uchar>(y,x)=colors[i];
+                    //darkImg.at<Vec3b>(y,x)[1]=colors[i];
+                    //darkImg.at<Vec3b>(y,x)[2]=colors[i];
+                }
+            }
+        }
+    }
+    namedWindow("ColoredMask",WINDOW_AUTOSIZE);
+    imshow("ColoredMask",dst);
+    waitKey(0);
+
+}
+
+void kmeanColor(Mat src,Mat& dst, int k){
+    dst=src.clone();
+    Mat samples(src.rows*src.cols, src.channels(), CV_32F); //change to float
+    for(int x=0;x<src.cols;x++){
+        for(int y=0;y<src.rows;y++){
+            for(int c=0;c<src.channels();c++){
+                samples.at<float>(y+x*src.rows,c)=src.at<Vec3b>(y,x)[c];
+            }
+        }
+    }
+
+    Mat labels; 
+    Mat centers;
+    int iter=5;
+    kmeans(samples,k,labels,TermCriteria(TermCriteria::MAX_ITER|TermCriteria::EPS,10,1.0), iter,KMEANS_PP_CENTERS,centers);
+
+    for(int x=0;x<src.cols;x++){
+        for(int y=0;y<src.rows;y++){
+            int ind=labels.at<int>(y+x*src.rows, 0);
+            for(int c=0;c<src.channels();c++){
+                dst.at<Vec3b>(y,x)[c]=centers.at<float>(ind,c);
             }
         }
     }
