@@ -7,7 +7,7 @@
 using namespace std;
 using namespace cv;
 
-void loadLabels_test(string filename) {
+/*void loadLabels_test(string filename) {
     vector<vector<int>> labels(8);
     loadLabels(filename, labels);
     for (int i=0; i<labels.size(); i++) {
@@ -43,7 +43,7 @@ void getPrecisionRecall_test() {
     double precision;
     double recall;
     getPrecisionRecall(bb1, bb2, precision, recall);
-}
+}*/
 
 int main(int argc, char** argv) {
     string ourDatasetPath = "../Our_dataset";
@@ -57,8 +57,8 @@ int main(int argc, char** argv) {
     vector<vector<vector<Rect>>> ourBoundingBoxes(8, bb_tray);
     vector<vector<vector<Rect>>> trueBoundingBoxes(8, bb_tray);
 
-    loadOurBoundingBoxes(ourDatasetPath, ourBoundingBoxes);
-    loadTrueBoundingBoxes(trueDatasetPath, trueBoundingBoxes);
+    loadBoundingBoxes(ourDatasetPath, ourBoundingBoxes);
+    loadBoundingBoxes(trueDatasetPath, trueBoundingBoxes);
 
     // Mean iou of the four pictures, considering each tray separately
     vector<double> meanIouPerTrayBB;
@@ -103,8 +103,8 @@ int main(int argc, char** argv) {
     vector<vector<Mat>> ourMasks(8, mask_tray);
     vector<vector<Mat>> trueMasks(8, mask_tray);
 
-    loadOurMasks(ourDatasetPath, ourMasks);
-    loadTrueMasks(trueDatasetPath, trueMasks);
+    loadMasks(ourDatasetPath, ourMasks, false);
+    loadMasks(trueDatasetPath, trueMasks, true);
 
     int a = 4;
     int b = 2;
