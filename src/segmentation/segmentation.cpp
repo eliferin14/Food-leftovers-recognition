@@ -49,9 +49,8 @@ void segmentImage(string filepath, string filename, string outputPath) {
         imwrite(outputPath+filename+"_centroid.jpg", paths_image);
 
     // Assign each keypoint to a centroid
-    vector<int> labels;
     vector<vector<Point2f>> clusters;
-    assignLabels(centroids, paths, labels, clusters);
+    clusterize(centroids, paths, clusters);
     /*
         Mat labels_image = image.clone();
         for ( int i=0; i<keypoints.size(); i++) {
@@ -84,7 +83,7 @@ void segmentImage(string filepath, string filename, string outputPath) {
         imwrite(outputPath+filename+"_clustered_points.jpg", clusters_image2);
 
     // Cluster again, with fewer centroids
-    //kmeansClustering(keypoints, centroids, clusters);
+    kmeansClustering(keypoints, centroids, clusters);
     
     // Pruning
     cout << "Pruning" << endl;
@@ -139,8 +138,7 @@ void segmentImage(string filepath, string filename, string outputPath) {
         //showImage("Bounding boxes", boundingBoxes_image);
 
     Mat imageHighSat = image.clone();
-    double saturationThreshold = 40;
-    removeLowSaturation(image, imageHighSat, saturationThreshold);
+    double saturationThreshold = 35;
     // Given the boundingBoxes, run the grabCut algorithm to define the masks
     cout << "Grabcut masks" << endl;
     vector<Mat> masks;
@@ -149,6 +147,11 @@ void segmentImage(string filepath, string filename, string outputPath) {
     // Remove low saturation pixels
     for (int i=0; i<masks.size(); i++) {
         Mat tempMask;
+        // First threshold using otsu
+        removeLowSaturation_otsu(masks[i], tempMask);
+        // Return to 3-channel BGR with the mask applied
+        bitwise_and(image, image, masks[i], tempMask);
+        // Second threshold with fixed value
         removeLowSaturation(masks[i], tempMask, saturationThreshold);
         //showImage("Maks", masks[i]);
         //showImage("Temp", tempMask);
@@ -161,7 +164,7 @@ void segmentImage(string filepath, string filename, string outputPath) {
 
     // Convert to binary mask and closing operation
     cout << "Mask postprocess" << endl;
-    masksPostprocess(masks);
+    masksPostprocess(masks, filename);
     
         for (int i=0; i<masks.size(); i++) {
             //showImage("Maks", masks[i]);
@@ -195,15 +198,33 @@ void segmentImage(string filepath, string filename, string outputPath) {
     //showImage("Contours", contours_image);
     imwrite(outputPath+filename+"_contours.jpg", contours_image);
 
-    // Save the data
-    Mat masksUninon;
-    uniteMasks(masks, masksUninon);
-    //showImage("Masks union", masksUninon);
-    string masksPath = outputPath + "masks/";
-    imwrite(masksPath+filename+"_masksUnion.jpg", masksUninon);
+    // Classification
+    vector<int> labels(boundingBoxes.size(), -1);
 
+    // Save the data
+
+    // Save the cumulative mask
+    string masksPath = outputPath + "masks/";
+    Mat masksUnion;
+    uniteMasks(masks, masksUnion);
+    //showImage("Masks union", masksUnion);
+    imwrite(masksPath+filename+"_masksUnion.jpg", masksUnion);
+
+    // Save the single masks
+    for (int i=0; i<masks.size(); i++) {
+        // We want to save only what is inside the bounding box
+        Mat colorMask;
+        cv::bitwise_and(image, image, colorMask, masks[i]);
+        Mat maskBB = colorMask(boundingBoxes[i]);
+        //showImage("maskBB", maskBB);
+        
+        imwrite(masksPath + filename + "_masks/mask_" + to_string(i) + ".jpg", masks[i]);
+        imwrite(masksPath + filename + "_masks/maskBB_" + to_string(i) + ".jpg", maskBB);
+    }
+
+    // Save the cumulative bounding box
     string bbPath = outputPath + "bounding_boxes/";
-    saveBoundingBoxes(boundingBoxes, bbPath+filename+"_bounding_boxes.txt");
+    saveBoundingBoxes(boundingBoxes, labels, bbPath+filename+"_bounding_box.txt");
     
 }
 
@@ -227,6 +248,8 @@ void iterateDataset(string dataset_path, string output_dataset_path) {// Filenam
 
         for (int i=0; i<filenames.size(); i++) {
             string filepath = tray_path + "/" + filenames[i] + ".jpg";
+            cv::utils::fs::createDirectory(output_tray_path + "masks/" + filenames[i] + "_masks");
+
 
             cout << "======================================" << endl;
             cout << filepath << endl;
@@ -243,7 +266,7 @@ int main(int argc, char** argv) {
     string dataset_path = "../Food_leftover_dataset"; 
     string output_dataset_path = "../Our_dataset";   
 
-    //segmentImage(argv[1], "food_image", "../Our_dataset/tray6/");
+    //segmentImage(argv[1], "food_imageg", "../Our_dataset/tray6/");
 
     iterateDataset(dataset_path, output_dataset_path);
 

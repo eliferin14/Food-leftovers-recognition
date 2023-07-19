@@ -132,9 +132,9 @@ void drawPath(cv::Mat& img, std::vector<cv::Point2f>& points) {
 }
 
 
-void assignLabels(std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& paths, std::vector<int>& labels, std::vector<std::vector<cv::Point2f>>& clusters) {
+void clusterize(std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& paths, std::vector<std::vector<cv::Point2f>>& clusters) {
     // Initialize labels with -1 as default value
-    labels = std::vector<int>(paths.size(), -1);
+    std::vector<int> labels(paths.size(), -1);
 
     clusters = std::vector<std::vector<cv::Point2f>>(centroids.size());
     

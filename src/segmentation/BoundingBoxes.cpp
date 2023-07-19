@@ -47,3 +47,27 @@ void extractPlatesBB(cv::Mat& src, std::vector<cv::Rect>& boundingBoxes, std::ve
         plates.push_back(subMatrix);
     }
 }
+
+void saveBoundingBoxes(std::vector<cv::Rect>& boundingBoxes, std::vector<int>& labels, std::string filepath) {
+    // We assume the filepath to be already something like "../Dataset/tray1/food_image_bounding_boxes.txt"
+    std::ofstream of(filepath);
+
+    if (of.is_open()) {
+        // Scan the bounding boxes vector
+        for (int i=0; i<boundingBoxes.size(); i++) {
+            // For each bounding box generate a row in the file
+            // [x, y, width, height]
+            cv::Rect bb = boundingBoxes[i];
+            std::stringstream rowSS;
+            rowSS << "ID: " << labels[i] << "; [" << bb.x << ", " << bb.y << ", " << bb.width << ", " << bb.height << "]";
+            std::string row = rowSS.str();
+            //std::cout << row << std::endl;
+
+            // Push the row in the file
+            of << row << '\n';
+        }
+
+        // Close the file
+        of.close();
+    }
+}

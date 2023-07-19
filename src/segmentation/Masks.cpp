@@ -40,6 +40,23 @@ void removeLowSaturation(cv::Mat& src, cv::Mat& dst, double threshold) {
     cv::bitwise_and(src, src, dst, mask);
 }
 
+void removeLowSaturation_otsu(cv::Mat& src, cv::Mat& dst) {
+    // Assuming the src is passed as BGR image, we convert it to HSV
+	cv::Mat srcHSV;
+	cv::cvtColor(src, srcHSV, cv::COLOR_BGR2HSV);
+
+	// Select the saturation channel (the second)
+	std::vector<cv::Mat> channels;
+	cv::split(srcHSV, channels);
+	cv::Mat srcS = channels[1];
+    
+    // Blur?
+    cv::GaussianBlur(srcS, srcS, cv::Size(5,5), 0);
+
+    // Otsu threshold
+    long double otsuThreshold = threshold(srcS, dst, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+}
+
 void refineBoundingBoxes(std::vector<cv::Mat>& masks, std::vector<cv::Rect>& boundingBoxes) {
     boundingBoxes.clear();
 
@@ -73,7 +90,7 @@ void refineBoundingBoxes(std::vector<cv::Mat>& masks, std::vector<cv::Rect>& bou
     }
 }
 
-void masksPostprocess(std::vector<cv::Mat>& masks) {
+void masksPostprocess(std::vector<cv::Mat>& masks, std::string filename) {
     for (int i=0; i<masks.size(); i++) {
         // Convert to grayscale
         cv::Mat maskGray;
@@ -82,10 +99,20 @@ void masksPostprocess(std::vector<cv::Mat>& masks) {
         // Binarization
         cv::inRange(maskGray, 1, 255, maskGray);
 
-        // Closing operation
-        morphologyEx(maskGray, maskGray, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(40,40)));
+        // Closing operation only if not leftover
+        if (!filename.compare("food_image")) {
+            //std::cout << "Closing" << std::endl;
+            morphologyEx(maskGray, maskGray, cv::MORPH_CLOSE, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(30,30)));
+        }
 
         // Save the mask
         masks[i] = maskGray;
+    }
+}
+
+void uniteMasks(std::vector<cv::Mat>& masks, cv::Mat& dst) {
+    dst = masks[0].clone();
+    for (int i=0; i<masks.size(); i++) {
+        cv::bitwise_or(dst, masks[i], dst);
     }
 }

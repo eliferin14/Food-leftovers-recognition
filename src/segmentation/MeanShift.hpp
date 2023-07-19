@@ -19,7 +19,7 @@ void findCentroids(std::vector<std::vector<cv::Point2f>>& paths, double radius, 
 void drawPath(cv::Mat& img, std::vector<cv::Point2f>& points); // Draw the paths on the image
 
 // Clustering
-void assignLabels(std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& paths, std::vector<int>& labels, std::vector<std::vector<cv::Point2f>>& clusters);
+void clusterize(std::vector<cv::Point2f>& centroids, std::vector<std::vector<cv::Point2f>>& paths, std::vector<std::vector<cv::Point2f>>& clusters);
 void removeLowCountClusters(std::vector<std::vector<cv::Point2f>>& clusters, std::vector<cv::Point2f>& centroids, int threshold);
 
 // Gaussian pruning
