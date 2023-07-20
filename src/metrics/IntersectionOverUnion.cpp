@@ -1,17 +1,5 @@
 #include "IntersectionOverUnion.hpp"
 
-int countPixelOfMask(cv::Mat& mask) {
-    int counter = 0;
-    for (int r=0; r<mask.rows; r++) {
-        for (int c=0; c<mask.cols; c++) {
-            if (mask.at<u_int8_t>(r,c) > 0 ) {
-                counter++;
-            }
-        }
-    }
-    return counter;
-}
-
 double iou_twoMasks(cv::Mat& mask, cv::Mat& trueMask) {
 
     if (mask.size() != trueMask.size()) {

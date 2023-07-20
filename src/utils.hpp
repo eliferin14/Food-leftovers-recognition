@@ -6,5 +6,6 @@
 void showImage(std::string windowName, cv::Mat img);
 void drawHistogram(cv::Mat& src, cv::Mat& hist, int hist_w, int hist_h, int bins);
 void showHistogram(std::string windowName, cv::Mat& src);
+int countPixelOfMask(cv::Mat& mask);
 
 #endif

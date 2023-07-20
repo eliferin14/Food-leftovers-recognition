@@ -48,3 +48,15 @@ void showHistogram(std::string windowName, cv::Mat& src) {
     drawHistogram(src, hist, 512, 256, 256);
     showImage(windowName, hist);
 }
+
+int countPixelOfMask(cv::Mat& mask) {
+    int counter = 0;
+    for (int r=0; r<mask.rows; r++) {
+        for (int c=0; c<mask.cols; c++) {
+            if (mask.at<u_int8_t>(r,c) > 0 ) {
+                counter++;
+            }
+        }
+    }
+    return counter;
+}

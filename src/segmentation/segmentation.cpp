@@ -3,6 +3,7 @@
 #include "Masks.hpp"
 #include "../utils.hpp"
 #include "MaskSplitter.hpp"
+#include "Estimator.hpp"
 #include <opencv2/core/utils/filesystem.hpp>
 
 using namespace std;
@@ -287,15 +288,32 @@ void compareTwoImages(string foodPath, string leftoverPath, string outputRootPat
 
 int main(int argc, char** argv) {
 
-    // Datasets relative paths
-    string dataset_path = "../Food_leftover_dataset"; 
-    string output_dataset_path = "../Our_dataset";   
+    if (argc < 2) {
+        cerr << "Please choose \"dataset\" or \"twoImages\"" << endl;
+        exit(-1);
+    }
 
-    //segmentImage(argv[1], "food_imageg", "../Our_dataset/tray6/");
+    if (!strcmp(argv[1], "dataset")) {
+        // Datasets relative paths
+        string dataset_path = "../Food_leftover_dataset"; 
+        string output_dataset_path = "../Our_dataset";   
 
-    //iterateDataset(dataset_path, output_dataset_path);
+        iterateDataset(dataset_path, output_dataset_path);
 
-    compareTwoImages(argv[1], argv[2], argv[3]);
+        datasetEstimator(output_dataset_path);
+    }
+    else if (!strcmp(argv[1], "twoImages")) {
+        if (argc != 4) {
+            cerr << "Please provide two relative paths for the two images to be compared. The first is the tray with full plates, while the second is the tray with the leftovers" << endl;
+            exit(-1);
+        }
 
-    return 0;
+        compareTwoImages(argv[2], argv[3], "..");
+        estimator();    
+
+    }
+    else {
+        cerr << "Please choose \"dataset\" or \"twoImages\"" << endl;
+        exit(-1);
+    }
 }

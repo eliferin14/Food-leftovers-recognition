@@ -9,7 +9,7 @@ find_package(OpenCV REQUIRED)
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
 # Segmentation
-add_executable(segmentation src/segmentation/segmentation.cpp src/segmentation/MeanShift.cpp src/utils.cpp src/segmentation/BoundingBoxes.cpp src/segmentation/Masks.cpp src/segmentation/MaskSplitter.cpp)
+add_executable(segmentation src/segmentation/segmentation.cpp src/segmentation/MeanShift.cpp src/utils.cpp src/segmentation/BoundingBoxes.cpp src/segmentation/Masks.cpp src/segmentation/MaskSplitter.cpp src/segmentation/Estimator.cpp)
 target_link_libraries(segmentation ${OpenCV_LIBS})
 
 # Metrics
