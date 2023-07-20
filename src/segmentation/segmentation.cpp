@@ -51,7 +51,7 @@ void segmentImage(string filepath, string filename, string outputPath) {
 
     // Assign each keypoint to a centroid
     vector<vector<Point2f>> clusters;
-    clusterize(centroids, paths, clusters);
+    kmeansClustering(keypoints, centroids, clusters);
     /*
         Mat labels_image = image.clone();
         for ( int i=0; i<keypoints.size(); i++) {
