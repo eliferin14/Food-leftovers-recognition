@@ -224,6 +224,7 @@ void segmentImage(string filepath, string filename, string outputPath) {
 
     // Save the cumulative bounding box
     string bbPath = outputPath + "bounding_boxes/";
+    //cout << bbPath << endl;
     saveBoundingBoxes(boundingBoxes, labels, bbPath+filename+"_bounding_box.txt");
     
 }
@@ -260,6 +261,30 @@ void iterateDataset(string dataset_path, string output_dataset_path) {// Filenam
     }
 }
 
+void compareTwoImages(string foodPath, string leftoverPath, string outputRootPath) {
+    // Create the folder structure
+    // We assume the folder indicated by outputRootPath already exists
+    string outputPath = outputRootPath + "/comparison/";
+    cv::utils::fs::createDirectory(outputPath);
+    cv::utils::fs::createDirectory(outputPath + "bounding_boxes");
+    cv::utils::fs::createDirectory(outputPath + "masks");
+    cv::utils::fs::createDirectory(outputPath + "masks/" + "food_image" + "_masks");
+    cv::utils::fs::createDirectory(outputPath + "masks/" + "leftover" + "_masks");
+
+
+    // Analyze the food image
+    cout << "======================================" << endl;
+    cout << foodPath << endl;
+    segmentImage(foodPath, "food_image", outputPath);
+
+    // Analyze the leftover image
+    cout << "======================================" << endl;
+    cout << leftoverPath << endl;
+    segmentImage(leftoverPath, "leftover", outputPath);
+
+    cout << "\nThe output can be found in \"" << outputPath << "\"\n" << endl;
+}
+
 int main(int argc, char** argv) {
 
     // Datasets relative paths
@@ -268,7 +293,9 @@ int main(int argc, char** argv) {
 
     //segmentImage(argv[1], "food_imageg", "../Our_dataset/tray6/");
 
-    iterateDataset(dataset_path, output_dataset_path);
+    //iterateDataset(dataset_path, output_dataset_path);
+
+    compareTwoImages(argv[1], argv[2], argv[3]);
 
     return 0;
 }

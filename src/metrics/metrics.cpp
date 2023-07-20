@@ -106,10 +106,6 @@ int main(int argc, char** argv) {
     loadMasks(ourDatasetPath, ourMasks, false);
     loadMasks(trueDatasetPath, trueMasks, true);
 
-    int a = 4;
-    int b = 2;
-    cout << iou_twoMasks(ourMasks[a][b], trueMasks[a][b]) << endl;
-
     // Mean iou of the four pictures, considering each tray separately
     vector<double> meanIouPerTrayMasks;
     cout << "\nMean IoU per tray (masks): " << endl;
